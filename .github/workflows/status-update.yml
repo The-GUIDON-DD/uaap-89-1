@@ -1,11 +1,9 @@
 name: Status update changes
-
 on:
   schedule:
-    - cron: '0 6 * * 1-5'
+    - cron: "0 6 * * 1-5"
       timezone: "Asia/Manila"
   workflow_dispatch:
-
 jobs:
   notify:
     runs-on: ubuntu-latest
@@ -20,7 +18,7 @@ jobs:
           message: |
             *[STATUS UPDATE]*
 
-            Hello <USERS>. Please update <QA> with the following format by *5PM today*:
+            Hello @neil\_bsn @JJPardoes. Please update @bluezippolighter @julyannahuang with the following format by *8PM today*:
             1. Progress
             2. Blockers
             3. PR or Screenshots/Video for any progress you have
