@@ -1,12 +1,15 @@
-import { Welcome } from "../welcome/welcome";
+import { FrontPage } from "../front-page/front-page";
 
 export function meta() {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "UAAP Season 89 First Semester Primer | The GUIDON" },
+    {
+      name: "description",
+      content: "The GUIDON's UAAP Season 89 First Semester Primer.",
+    },
   ];
 }
 
 export default function Home() {
-  return <Welcome />;
+  return <FrontPage />;
 }
