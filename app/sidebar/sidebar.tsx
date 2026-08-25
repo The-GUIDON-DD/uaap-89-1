@@ -69,7 +69,7 @@ export function Sidebar() {
       {/* Sliding sidebar drawer */}
       <aside
         aria-hidden={!open}
-        className={`fixed left-0 top-0 z-[5000] flex h-screen w-[360px] max-w-[85vw] flex-col overflow-y-auto bg-[#1c4480] font-archivo text-white transition-transform duration-500 ${EASE} ${
+        className={`fixed left-0 top-0 z-[5000] flex h-screen w-[360px] max-w-[85vw] flex-col overflow-y-auto bg-[#1c4480] font-archivo text-white transition-transform duration-300 ${EASE} ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -104,12 +104,11 @@ export function Sidebar() {
               >
                 <button
                   type="button"
-                  disabled={!collapsible}
                   aria-expanded={collapsible ? isOpen : undefined}
                   onClick={() => collapsible && toggle(option.name)}
-                  className={`flex w-full items-center gap-[19px] px-[40px] py-[14px] text-left transition-colors duration-[250ms] ${EASE} ${
-                    isOpen ? "bg-[#1b62cd]" : ""
-                  } ${collapsible ? "cursor-pointer" : "cursor-default"}`}
+                  className={`flex w-full cursor-pointer items-center gap-[19px] px-[40px] py-[14px] text-left transition-colors duration-200 ${EASE} ${
+                    isOpen ? "bg-[#1b62cd]" : "hover:bg-[#1b62cd]/30"
+                  }`}
                 >
                   <span className="whitespace-nowrap text-[19px] font-bold">
                     {option.name}
