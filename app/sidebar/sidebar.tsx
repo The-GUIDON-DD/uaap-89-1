@@ -105,7 +105,7 @@ export function Sidebar() {
             const subs = option.subOptions;
             const collapsible = subs !== undefined;
             const isOpen = collapsible && openSport === option.name;
-            const headerClass = `flex w-full cursor-pointer items-center gap-[19px] px-[40px] py-[14px] text-left transition-colors duration-200 ${EASE} ${
+            const headerClass = `flex w-full cursor-pointer items-center gap-[19px] px-[40px] py-[14px] text-left transition-colors duration-300 ${EASE} ${
               isOpen ? "bg-[#1b62cd]" : "hover:bg-[#1b62cd]/30"
             }`;
 
@@ -158,7 +158,7 @@ export function Sidebar() {
                           <Link
                             key={sub}
                             to={`/sports/${slugify(sub)}`}
-                            className={`block py-[12px] pl-[58px] pr-[40px] transition-colors duration-200 ${EASE} hover:bg-white/10`}
+                            className={`block py-[12px] pl-[58px] pr-[40px] transition-colors duration-300 ${EASE} hover:bg-white/10`}
                           >
                             {sub}
                           </Link>
