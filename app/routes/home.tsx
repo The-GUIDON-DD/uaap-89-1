@@ -1,3 +1,4 @@
+import { EditorsMessage } from "../editors-message/editors-message";
 import { FrontPage } from "../front-page/front-page";
 
 export function meta() {
@@ -11,5 +12,14 @@ export function meta() {
 }
 
 export default function Home() {
-  return <FrontPage />;
+  return (
+    <main className="h-dvh w-full snap-y snap-mandatory overflow-y-auto overflow-x-hidden">
+      <div className="h-dvh w-full snap-start">
+        <FrontPage />
+      </div>
+      <div className="h-dvh w-full snap-start">
+        <EditorsMessage />
+      </div>
+    </main>
+  );
 }
