@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import chevron from "./assets/chevron.svg";
 import guidonLogo from "./assets/guidon-logo.svg";
 import uaapTitle from "./assets/uaap-title.svg";
@@ -19,6 +20,8 @@ const options: SportOption[] = [
     name: "Beach Volleyball",
     subOptions: ["Men’s Beach Volleyball", "Women’s Beach Volleyball"],
   },
+  { name: "Football", subOptions: ["Men’s Football", "Women’s Football"] },
+  { name: "Swimming", subOptions: ["Men’s Swimming", "Women’s Swimming"] },
   {
     name: "Track and Field",
     subOptions: ["Men’s Track and Field", "Women’s Track and Field"],
@@ -33,6 +36,14 @@ const options: SportOption[] = [
 
 // Native ease-in-out, matching the reference site's transitions.
 const EASE = "ease-[cubic-bezier(0.42,0,0.58,1)]";
+
+/** Turn a sport/category name into a URL slug, e.g. "Men's Basketball" → "mens-basketball". */
+const slugify = (name: string) =>
+  name
+    .toLowerCase()
+    .replace(/['’]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 
 export function Sidebar() {
   const [open, setOpen] = useState(false);
@@ -94,6 +105,9 @@ export function Sidebar() {
             const subs = option.subOptions;
             const collapsible = subs !== undefined;
             const isOpen = collapsible && openSport === option.name;
+            const headerClass = `flex w-full cursor-pointer items-center gap-[19px] px-[40px] py-[14px] text-left transition-colors duration-200 ${EASE} ${
+              isOpen ? "bg-[#1b62cd]" : "hover:bg-[#1b62cd]/30"
+            }`;
 
             return (
               <div
@@ -102,18 +116,16 @@ export function Sidebar() {
                   isOpen ? "bg-[#16396e]" : "bg-transparent"
                 }`}
               >
-                <button
-                  type="button"
-                  aria-expanded={collapsible ? isOpen : undefined}
-                  onClick={() => collapsible && toggle(option.name)}
-                  className={`flex w-full cursor-pointer items-center gap-[19px] px-[40px] py-[14px] text-left transition-colors duration-200 ${EASE} ${
-                    isOpen ? "bg-[#1b62cd]" : "hover:bg-[#1b62cd]/30"
-                  }`}
-                >
-                  <span className="whitespace-nowrap text-[19px] font-bold">
-                    {option.name}
-                  </span>
-                  {collapsible && (
+                {collapsible ? (
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    onClick={() => toggle(option.name)}
+                    className={headerClass}
+                  >
+                    <span className="whitespace-nowrap text-[19px] font-bold">
+                      {option.name}
+                    </span>
                     <img
                       src={chevron}
                       alt=""
@@ -122,8 +134,17 @@ export function Sidebar() {
                         isOpen ? "rotate-180" : ""
                       }`}
                     />
-                  )}
-                </button>
+                  </button>
+                ) : (
+                  <Link
+                    to={`/sports/${slugify(option.name)}`}
+                    className={headerClass}
+                  >
+                    <span className="whitespace-nowrap text-[19px] font-bold">
+                      {option.name}
+                    </span>
+                  </Link>
+                )}
 
                 {subs && subs.length > 0 && (
                   <div
@@ -132,9 +153,15 @@ export function Sidebar() {
                     }`}
                   >
                     <div className="overflow-hidden">
-                      <div className="flex flex-col gap-[12px] pb-[16px] pl-[58px] pt-[10px] text-[18px]">
+                      <div className="flex flex-col text-[18px]">
                         {subs.map((sub) => (
-                          <p key={sub}>{sub}</p>
+                          <Link
+                            key={sub}
+                            to={`/sports/${slugify(sub)}`}
+                            className={`block py-[12px] pl-[58px] pr-[40px] transition-colors duration-200 ${EASE} hover:bg-white/10`}
+                          >
+                            {sub}
+                          </Link>
                         ))}
                       </div>
                     </div>
