@@ -39,50 +39,52 @@ export function Credits({
 }: CreditsProps = {}) {
   return (
     <footer className="flex min-h-screen w-full flex-col bg-[#194681] font-archivo text-white">
-      <div className="mx-auto flex w-full max-w-[1777px] flex-1 flex-col px-6 py-[40px] sm:px-12 lg:px-[92px]">
-        {/* Logo + title */}
-        <div className="flex flex-col gap-[22px] lg:gap-[28px]">
+      <div className="mx-auto flex w-full max-w-[1777px] flex-1 flex-col px-6 py-[44px] sm:px-12 lg:px-[92px]">
+        {/* Masthead */}
+        <div className="flex flex-col gap-[24px] lg:gap-[30px]">
           <img
             src={guidonLogo}
             alt="The Guidon"
             className="block h-auto w-[200px] sm:w-[240px] lg:w-[280px]"
           />
-          <div className="font-display leading-[0.9] tracking-[0.01em]">
-            <h2 className="text-[36px] sm:text-[52px] lg:text-[68px]">
-              {title}
-            </h2>
-            <h2 className="text-[36px] sm:text-[52px] lg:text-[68px]">
-              {subtitle}
-            </h2>
-          </div>
+          <h2 className="font-display text-[36px] leading-[0.9] tracking-[0.01em] sm:text-[52px] lg:text-[68px]">
+            <span className="block">{title}</span>
+            <span className="block">{subtitle}</span>
+          </h2>
         </div>
 
         {/* Divider */}
-        <div className="mt-[28px] h-[2px] w-full bg-white" />
+        <div className="mt-[32px] h-[2px] w-full bg-white" />
 
         {/* Credits — grows to fill the remaining height */}
-        <div className="mt-[28px] flex flex-1 flex-col gap-[24px] text-[12px] lg:flex-row lg:gap-[40px] lg:text-[14px]">
-          <div className="flex shrink-0 flex-col gap-[24px] lg:w-[320px]">
+        <div className="mt-[32px] flex flex-1 flex-col gap-[28px] text-[12px] lg:flex-row lg:gap-[48px] lg:text-[14px]">
+          <dl className="flex shrink-0 flex-col gap-[26px] lg:w-[300px]">
             {editors.map((editor, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: order-independent credit list
               <div key={`${editor.position}-${i}`}>
-                <p className="font-bold leading-[1.2]">{editor.position}</p>
-                <p className="font-normal leading-[1.2]">{editor.name}</p>
+                <dt className="font-bold uppercase leading-[1.3] tracking-[0.06em]">
+                  {editor.position}
+                </dt>
+                <dd className="font-normal leading-[1.5] text-white/85">
+                  {editor.name}
+                </dd>
               </div>
             ))}
-          </div>
+          </dl>
 
-          <div className="flex flex-1 flex-col justify-between gap-[16px]">
+          <dl className="flex flex-1 flex-col justify-between gap-[22px]">
             {sections.map((section, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: order-independent credit list
               <div key={`${section.position}-${i}`}>
-                <p className="font-bold leading-[1.2]">{section.position}</p>
-                <p className="font-normal leading-[1.2]">
+                <dt className="font-bold uppercase leading-[1.3] tracking-[0.06em]">
+                  {section.position}
+                </dt>
+                <dd className="font-normal leading-[1.6] text-white/85">
                   {section.names.join(", ")}
-                </p>
+                </dd>
               </div>
             ))}
-          </div>
+          </dl>
         </div>
       </div>
     </footer>
