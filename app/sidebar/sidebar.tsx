@@ -69,7 +69,7 @@ export function Sidebar() {
       {/* Sliding sidebar drawer */}
       <aside
         aria-hidden={!open}
-        className={`fixed left-0 top-0 z-[5000] flex h-screen w-[360px] max-w-[85vw] flex-col overflow-y-auto bg-[#1c4480] font-archivo text-white transition-transform duration-300 ${EASE} ${
+        className={`scrollbar-overlay fixed left-0 top-0 z-[5000] flex h-screen w-[360px] max-w-[85vw] flex-col bg-[#1c4480] font-archivo text-white transition-transform duration-300 ${EASE} ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
