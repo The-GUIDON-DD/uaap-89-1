@@ -1,75 +1,17 @@
-import { motion, useInView } from "motion/react";
-import { useRef } from "react";
+import {
+  type MotionValue,
+  motion,
+  useInView,
+  useMotionTemplate,
+  useMotionValueEvent,
+  useTransform,
+} from "motion/react";
+import { useEffect, useRef } from "react";
 import {
   DESIGN_H,
   DESIGN_W,
   useViewportScale,
 } from "../lib/use-viewport-scale";
-import textureOverlay from "../public/editors-message/texture-overlay.png";
-import teamPhoto from "../public/front-page/image 41.svg";
-
-const greyCircleMotion = {
-  initial: { x: -207.725, y: -461.782 },
-  animate: { x: [-207.725, -207.725, 0, 0], y: [-461.782, -461.782, 0, 0] },
-  transition: {
-    x: {
-      duration: 1.4,
-      times: [0, 0.0231, 0.5695, 1],
-      ease: ["linear", "easeInOut", "linear"],
-    },
-    y: {
-      duration: 1.4,
-      times: [0, 0.0231, 0.5695, 1],
-      ease: ["linear", "easeInOut", "linear"],
-    },
-  },
-} as const;
-
-const orangeCircleMotion = {
-  initial: { x: -208.887, y: -587.652 },
-  animate: { x: [-208.887, -208.887, 0, 0], y: [-587.652, -587.652, 0, 0] },
-  transition: {
-    x: {
-      duration: 1.4,
-      times: [0, 0.0431, 0.58, 1],
-      ease: ["linear", "easeInOut", "linear"],
-    },
-    y: {
-      duration: 1.4,
-      times: [0, 0.0431, 0.58, 1],
-      ease: ["linear", "easeInOut", "linear"],
-    },
-  },
-} as const;
-
-const lineMotion = {
-  initial: { opacity: 0 },
-  animate: { opacity: [0, 0, 1, 1] },
-  transition: {
-    opacity: {
-      duration: 1.4,
-      times: [0, 0.3714, 0.6507, 1],
-      ease: ["linear", "easeOut", "linear"],
-    },
-  },
-} as const;
-
-const greyDashedMotion = {
-  initial: { x: 331.836, y: -432.433 },
-  animate: { x: [331.836, 331.836, 0, 0], y: [-432.433, -432.433, 0, 0] },
-  transition: {
-    x: {
-      duration: 1.4,
-      times: [0, 0.0898, 0.59, 1],
-      ease: ["linear", "easeInOut", "linear"],
-    },
-    y: {
-      duration: 1.4,
-      times: [0, 0.0898, 0.59, 1],
-      ease: ["linear", "easeInOut", "linear"],
-    },
-  },
-} as const;
 
 const dotMotion = {
   initial: { opacity: 0 },
@@ -78,66 +20,6 @@ const dotMotion = {
     opacity: {
       duration: 1.4,
       times: [0, 0.5333, 0.8126, 1],
-      ease: ["linear", "easeOut", "linear"],
-    },
-  },
-} as const;
-
-const bigGreyCircleMotion = {
-  initial: { x: 408, y: 60 },
-  animate: { x: [408, 0, 0], y: [60, 0, 0] },
-  transition: {
-    x: { duration: 1.4, times: [0, 0.5495, 1], ease: ["easeInOut", "linear"] },
-    y: { duration: 1.4, times: [0, 0.5495, 1], ease: ["easeInOut", "linear"] },
-  },
-} as const;
-
-const greenCircleMotion = {
-  initial: { x: -214, y: 786 },
-  animate: { x: [-214, -214, 0, 0], y: [786, 786, 0, 0] },
-  transition: {
-    x: {
-      duration: 1.4,
-      times: [0, 0.064, 0.5574, 1],
-      ease: ["linear", "easeInOut", "linear"],
-    },
-    y: {
-      duration: 1.4,
-      times: [0, 0.064, 0.5574, 1],
-      ease: ["linear", "easeInOut", "linear"],
-    },
-  },
-} as const;
-
-const articleTitleMotion = {
-  initial: { opacity: 0, y: -200 },
-  animate: { opacity: [0, 0, 1, 1], y: [-200, -200, 0, 0] },
-  transition: {
-    opacity: {
-      duration: 1.4,
-      times: [0, 0.1224, 0.6219, 1],
-      ease: ["linear", "easeOut", "linear"],
-    },
-    y: {
-      duration: 1.4,
-      times: [0, 0.1935, 0.6219, 1],
-      ease: ["linear", "easeOut", "linear"],
-    },
-  },
-} as const;
-
-const readMoreMotion = {
-  initial: { opacity: 0, x: -500 },
-  animate: { opacity: [0, 0, 1, 1], x: [-500, -500, 0, 0] },
-  transition: {
-    opacity: {
-      duration: 1.4,
-      times: [0, 0.1224, 0.6219, 1],
-      ease: ["linear", "easeOut", "linear"],
-    },
-    x: {
-      duration: 1.4,
-      times: [0, 0.1935, 0.6219, 1],
       ease: ["linear", "easeOut", "linear"],
     },
   },
@@ -155,40 +37,109 @@ function reveal(
   };
 }
 
-export function EditorsMessage() {
+/**
+ * A connecting line. Slides in/out horizontally (true screen-space, independent
+ * of the line's own rotation) driven directly by scroll progress, so it enters
+ * as the page scrolls in and reverses cleanly on the way back out.
+ */
+function Line({
+  progress,
+  fromX,
+  outerClassName,
+  rotateClassName,
+  lineWidth,
+  stroke,
+  dashed,
+}: {
+  progress: MotionValue<number>;
+  fromX: number;
+  outerClassName: string;
+  rotateClassName: string;
+  lineWidth: number;
+  stroke: string;
+  dashed?: boolean;
+}) {
+  const x = useTransform(progress, [0, 1], [fromX, 0]);
+
+  return (
+    <motion.div className={outerClassName} style={{ x }}>
+      <div className={rotateClassName}>
+        <div className="h-0 relative" style={{ width: lineWidth }}>
+          <div className="absolute inset-[-3px_0_0_0]">
+            <svg
+              aria-hidden="true"
+              className="block size-full"
+              fill="none"
+              height="3"
+              preserveAspectRatio="none"
+              viewBox={`0 0 ${lineWidth} 3`}
+              width={lineWidth}
+            >
+              <line
+                stroke={stroke}
+                strokeDasharray={dashed ? "3 3" : undefined}
+                strokeWidth="3"
+                x2={lineWidth}
+                y1="1.5"
+                y2="1.5"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+export function EditorsMessage({
+  progress,
+}: {
+  progress: MotionValue<number>;
+}) {
   const scale = useViewportScale();
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.4 });
+  // Article title and Read More glide in/out continuously with scroll, like the
+  // circles and lines, instead of firing once.
+  const articleOpacity = useTransform(progress, [0, 1], [0, 1]);
+  const articleY = useTransform(progress, [0, 1], [-200, 0]);
+  const readMoreOpacity = useTransform(progress, [0, 1], [0, 1]);
+  const readMoreX = useTransform(progress, [0, 1], [-500, 0]);
+
+  // The shared green circle's center dot is genuinely transparent. Where it
+  // travels directly over these lines, punch a matching hole through the
+  // lines themselves (in this wrapper's own local/design-space coordinates)
+  // so the dot only ever reveals the plain background, never a line.
+  const dotMaskX = useTransform(progress, [0, 1], [118, 332]);
+  const dotMaskY = useTransform(progress, [0, 1], [937, 151]);
+  const linesMask = useMotionTemplate`radial-gradient(circle at ${dotMaskX}px ${dotMaskY}px, transparent 15px, black 16px)`;
+  // motion's `style` prop only fast-path-updates a known whitelist of CSS
+  // properties, which doesn't include mask-image — so it's applied here by
+  // hand, imperatively, on every change instead.
+  const linesMaskRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    linesMaskRef.current?.style.setProperty("mask-image", linesMask.get());
+    linesMaskRef.current?.style.setProperty(
+      "-webkit-mask-image",
+      linesMask.get(),
+    );
+  }, [linesMask]);
+  useMotionValueEvent(linesMask, "change", (latest) => {
+    linesMaskRef.current?.style.setProperty("mask-image", latest);
+    linesMaskRef.current?.style.setProperty("-webkit-mask-image", latest);
+  });
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative size-full overflow-hidden"
-      style={{ background: "#121212" }}
-    >
-      <img
-        alt=""
-        className="absolute inset-0 max-w-none object-cover pointer-events-none size-full"
-        src={teamPhoto}
-      />
-      <div
-        className="absolute inset-0 size-full"
-        style={{ background: "rgba(18,18,18,0.4)" }}
-      />
-      <img
-        alt=""
-        className="absolute inset-0 max-w-none object-cover opacity-50 pointer-events-none size-full"
-        src={textureOverlay}
-      />
-      <div
-        className="absolute inset-0 size-full"
-        style={{
-          backgroundImage:
-            "linear-gradient(179.9396734604826deg, rgba(0,0,0,0) 3.1133%, rgb(28,68,128) 107.81%)",
-        }}
-      />
+    <section ref={sectionRef} className="relative size-full overflow-hidden">
+      {/* The shared photo/tint/gradient backdrop and the shared decorative circles
+          both live once in Home, so the background is pixel-identical on every
+          page and never appears to move, reset, or shift when scrolling. */}
 
+      {/* Connecting lines: no z-index, so they sit behind the shared circles
+          (z-10) and the text layer (z-20) — backmost among all elements.
+          Masked with a hole wherever the shared green dot currently sits. */}
       <div
+        ref={linesMaskRef}
         className="absolute left-1/2 top-1/2"
         style={{
           width: DESIGN_W,
@@ -197,161 +148,44 @@ export function EditorsMessage() {
         }}
       >
         <div className="relative size-full">
-          {/* Grey circle */}
-          <motion.div
-            className="absolute flex items-center justify-center left-[1644.72px] size-[496.481px] top-[-12.46px]"
-            {...reveal(greyCircleMotion, isInView)}
-          >
-            <div className="flex-none rotate-[6.27deg]">
-              <div className="relative size-[450px]">
-                <svg
-                  aria-hidden="true"
-                  className="absolute block inset-0 size-full"
-                  fill="none"
-                  height="450"
-                  preserveAspectRatio="none"
-                  viewBox="0 0 450 450"
-                  width="450"
-                >
-                  <circle
-                    cx="225"
-                    cy="225"
-                    r="223.5"
-                    stroke="#707071"
-                    strokeWidth="3"
-                  />
-                  <circle
-                    cx="225"
-                    cy="225"
-                    r="14"
-                    stroke="#707071"
-                    strokeWidth="2"
-                  />
-                </svg>
-              </div>
-            </div>
-          </motion.div>
+          <Line
+            progress={progress}
+            fromX={500}
+            outerClassName="absolute flex h-[755.922px] items-center justify-center left-[1432.53px] top-[-87.47px] w-[461.155px]"
+            rotateClassName="flex-none rotate-[-121.39deg]"
+            lineWidth={885.484}
+            stroke="#707071"
+            dashed
+          />
+          <Line
+            progress={progress}
+            fromX={500}
+            outerClassName="absolute flex h-[459.564px] items-center justify-center left-[434px] top-[1760.6px] w-[431.807px]"
+            rotateClassName="flex-none rotate-[133.22deg]"
+            lineWidth={3630.601}
+            stroke="#B33926"
+          />
+          <Line
+            progress={progress}
+            fromX={-500}
+            outerClassName="absolute flex h-[704px] items-center justify-center left-[972.75px] top-[-1285px] w-[612px]"
+            rotateClassName="-rotate-[49deg] flex-none"
+            lineWidth={3932.824}
+            stroke="#707071"
+          />
+        </div>
+      </div>
 
-          <motion.div
-            className="absolute flex items-center justify-center left-[1489.88px] size-[807.609px] top-[264.65px]"
-            {...reveal(orangeCircleMotion, isInView)}
-          >
-            <div className="flex-none rotate-[6.27deg]">
-              <div className="relative size-[732px]">
-                <svg
-                  aria-hidden="true"
-                  className="absolute block inset-0 size-full"
-                  fill="none"
-                  height="732"
-                  preserveAspectRatio="none"
-                  viewBox="0 0 732 732"
-                  width="732"
-                >
-                  <circle
-                    cx="366"
-                    cy="366"
-                    r="364.5"
-                    stroke="#B33926"
-                    strokeWidth="3"
-                  />
-                  <circle cx="366" cy="366" fill="#B33926" r="15" />
-                </svg>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Right line dashed */}
-          <div className="absolute flex h-[755.922px] items-center justify-center left-[1432.53px] top-[-87.47px] w-[461.155px]">
-            <div className="flex-none rotate-[-121.39deg]">
-              <motion.div
-                className="h-0 relative w-[885.484px]"
-                {...reveal(lineMotion, isInView)}
-              >
-                <div className="absolute inset-[-3px_0_0_0]">
-                  <svg
-                    aria-hidden="true"
-                    className="block size-full"
-                    fill="none"
-                    height="3"
-                    preserveAspectRatio="none"
-                    viewBox="0 0 885.484 3"
-                    width="885.484"
-                  >
-                    <line
-                      stroke="#707071"
-                      strokeDasharray="3 3"
-                      strokeWidth="3"
-                      x2="885.484"
-                      y1="1.5"
-                      y2="1.5"
-                    />
-                  </svg>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-
-          {/* Line 6 */}
-          <div className="absolute flex h-[459.564px] items-center justify-center left-[1461.88px] top-[668.45px] w-[431.807px]">
-            <div className="flex-none rotate-[133.22deg]">
-              <motion.div
-                className="h-0 relative w-[630.601px]"
-                {...reveal(lineMotion, isInView)}
-              >
-                <div className="absolute inset-[-3px_0_0_0]">
-                  <svg
-                    aria-hidden="true"
-                    className="block size-full"
-                    fill="none"
-                    height="3"
-                    preserveAspectRatio="none"
-                    viewBox="0 0 630.601 3"
-                    width="630.601"
-                  >
-                    <line
-                      stroke="#B33926"
-                      strokeWidth="3"
-                      x2="630.601"
-                      y1="1.5"
-                      y2="1.5"
-                    />
-                  </svg>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-
-          {/* Grey circle dashed */}
-          <motion.div
-            className="absolute flex items-center justify-center left-[1283px] size-[492.068px] top-[701.24px]"
-            {...reveal(greyDashedMotion, isInView)}
-          >
-            <div className="flex-none rotate-[6.27deg]">
-              <div className="relative size-[446px]">
-                <div className="absolute inset-[-0.34%]">
-                  <svg
-                    aria-hidden="true"
-                    className="block size-full"
-                    fill="none"
-                    height="449"
-                    preserveAspectRatio="none"
-                    viewBox="0 0 449 449"
-                    width="449"
-                  >
-                    <circle
-                      cx="224.5"
-                      cy="224.5"
-                      r="223"
-                      stroke="#707071"
-                      strokeDasharray="3 3"
-                      strokeWidth="3"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
+      {/* z-20 keeps this above the shared circles layer (z-10). */}
+      <div
+        className="absolute left-1/2 top-1/2 z-20"
+        style={{
+          width: DESIGN_W,
+          height: DESIGN_H,
+          transform: `translate(-50%, -50%) scale(${scale})`,
+        }}
+      >
+        <div className="relative size-full">
           {/* Intersection dot top orange */}
           <div className="absolute flex items-center justify-center left-[1685.18px] size-[33.099px] top-[339.05px]">
             <div className="flex-none rotate-[6.27deg]">
@@ -396,92 +230,6 @@ export function EditorsMessage() {
             </div>
           </div>
 
-          {/* Left line */}
-          <div className="absolute flex h-[704px] items-center justify-center left-[-11px] top-[-153px] w-[612px]">
-            <div className="-rotate-[49deg] flex-none">
-              <motion.div
-                className="h-0 relative w-[932.824px]"
-                {...reveal(lineMotion, isInView)}
-              >
-                <div className="absolute inset-[-3px_0_0_0]">
-                  <svg
-                    aria-hidden="true"
-                    className="block size-full"
-                    fill="none"
-                    height="3"
-                    preserveAspectRatio="none"
-                    viewBox="0 0 932.824 3"
-                    width="932.824"
-                  >
-                    <line
-                      stroke="#707071"
-                      strokeWidth="3"
-                      x2="932.824"
-                      y1="1.5"
-                      y2="1.5"
-                    />
-                  </svg>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-
-          {/* Big grey circle */}
-          <motion.div
-            className="absolute left-[-515px] size-[902px] top-[-89px]"
-            {...reveal(bigGreyCircleMotion, isInView)}
-          >
-            <svg
-              aria-hidden="true"
-              className="absolute block inset-0 size-full"
-              fill="none"
-              height="902"
-              preserveAspectRatio="none"
-              viewBox="0 0 902 902"
-              width="902"
-            >
-              <circle
-                cx="451"
-                cy="451"
-                r="449.5"
-                stroke="#707071"
-                strokeWidth="3"
-              />
-            </svg>
-          </motion.div>
-
-          {/* Green circle */}
-          <motion.div
-            className="absolute left-[107px] size-[450px] top-[-74px]"
-            {...reveal(greenCircleMotion, isInView)}
-          >
-            <svg
-              aria-hidden="true"
-              className="absolute block inset-0 size-full"
-              fill="none"
-              height="450"
-              preserveAspectRatio="none"
-              viewBox="0 0 450 450"
-              width="450"
-            >
-              <circle
-                cx="225"
-                cy="225"
-                r="223.5"
-                stroke="#66AF45"
-                strokeWidth="3"
-              />
-              <circle
-                cx="225"
-                cy="225"
-                fill="#090A0B"
-                r="14"
-                stroke="#707071"
-                strokeWidth="2"
-              />
-            </svg>
-          </motion.div>
-
           {/* Intersection dot top green */}
           <div className="absolute flex items-center justify-center left-[370px] size-[33.099px] top-[352px]">
             <div className="flex-none rotate-[6.27deg]">
@@ -507,8 +255,13 @@ export function EditorsMessage() {
           {/* Article title */}
           <motion.div
             className="absolute w-[1072px] text-white"
-            style={{ top: 151, left: 162, height: 504 }}
-            {...reveal(articleTitleMotion, isInView)}
+            style={{
+              top: 151,
+              left: 162,
+              height: 504,
+              opacity: articleOpacity,
+              y: articleY,
+            }}
           >
             <p
               className="absolute left-0 right-0 top-0 leading-[99.9%] not-italic text-[40px] tracking-[-0.8px]"
@@ -589,7 +342,7 @@ export function EditorsMessage() {
           {/* Read more */}
           <motion.div
             className="absolute inset-0 overflow-visible pointer-events-none"
-            {...reveal(readMoreMotion, isInView)}
+            style={{ opacity: readMoreOpacity, x: readMoreX }}
           >
             <div className="absolute flex h-0 items-center justify-center left-[-1580px] top-[874.92px] w-[1697px]">
               <div className="flex-none rotate-180">
