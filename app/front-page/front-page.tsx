@@ -141,7 +141,7 @@ export function FrontPage({ progress }: { progress: MotionValue<number> }) {
   const scrollOpacity = useTransform(progress, [0, 1], [1, 0]);
 
   return (
-    <section className="relative z-20 size-full overflow-hidden bg-white">
+    <section className="relative z-20 size-full overflow-hidden">
       <div
         className="absolute left-1/2 top-1/2"
         style={{
