@@ -37,14 +37,31 @@ export function EditorsMessage({
             alt=""
             aria-hidden="true"
             className="absolute"
-            style={{ left: 0, top: 0, width: DESIGN_W, height: DESIGN_H }}
+            style={{
+              left: 0,
+              top: 0,
+              width: DESIGN_W,
+              height: DESIGN_H,
+              // Fades the top edge to transparent so the streaks don't start
+              // in a hard-cut line where the front page ends — they dissolve
+              // out of the shared backdrop instead of appearing abruptly.
+              maskImage: "linear-gradient(to bottom, transparent 0%, black 6%)",
+              WebkitMaskImage:
+                "linear-gradient(to bottom, transparent 0%, black 6%)",
+            }}
             src={background}
           />
 
-          <img
+          <motion.img
             alt="Hamburger menu"
             className="absolute"
-            style={{ left: 92, top: 58, width: 34, height: 22 }}
+            style={{
+              left: 92,
+              top: 58,
+              width: 34,
+              height: 22,
+              opacity: articleOpacity,
+            }}
             src={hamburgerMenu}
           />
 

@@ -76,6 +76,11 @@ const ALL_IMAGES = [
 const SLIDE_INTERVAL_MS = 4000;
 const TRANSITION = { duration: 0.65, ease: [0.4, 0, 0.2, 1] as const };
 
+// Fades each photo out over this many design-space pixels right at the
+// bottom of the canvas, so it dissolves into the shared backdrop instead of
+// ending in a hard-cut line where this page meets the next one.
+const BOTTOM_FADE_PX = 130;
+
 function SlidingPhoto({
   src,
   slideKey,
@@ -89,8 +94,17 @@ function SlidingPhoto({
   box: { left: number; top: number; width: number; height: number };
   anchor?: "bottom" | "center";
 }) {
+  // Expressed in the box's own local coordinates, since that's what the
+  // mask-image on this element is measured against.
+  const fadeStart = Math.max(0, DESIGN_H - BOTTOM_FADE_PX - box.top);
+  const fadeEnd = Math.min(box.height, DESIGN_H - box.top);
+  const fadeMask = `linear-gradient(to bottom, black ${fadeStart}px, transparent ${fadeEnd}px)`;
+
   return (
-    <div className="absolute overflow-hidden" style={box}>
+    <div
+      className="absolute overflow-hidden"
+      style={{ ...box, maskImage: fadeMask, WebkitMaskImage: fadeMask }}
+    >
       <AnimatePresence initial={false}>
         {src && (
           <motion.img
