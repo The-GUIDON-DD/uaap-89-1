@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import chevron from "./assets/chevron.svg";
 import guidonLogo from "./assets/guidon-logo.svg";
@@ -45,6 +45,27 @@ const slugify = (name: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
+// Convert any CSS color (rgb, oklch, hsl, hex, named, …) to [r, g, b], or
+// null if fully transparent. A 1×1 canvas lets the browser do the parsing,
+// so we don't have to special-case each color syntax.
+let swatchCtx: CanvasRenderingContext2D | null | undefined;
+function cssColorToRgb(color: string): [number, number, number] | null {
+  if (typeof document === "undefined") return null;
+  if (swatchCtx === undefined) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    swatchCtx = canvas.getContext("2d", { willReadFrequently: true });
+  }
+  if (!swatchCtx) return null;
+  swatchCtx.clearRect(0, 0, 1, 1);
+  swatchCtx.fillStyle = "#000";
+  swatchCtx.fillStyle = color;
+  swatchCtx.fillRect(0, 0, 1, 1);
+  const [r, g, b, a] = swatchCtx.getImageData(0, 0, 1, 1).data;
+  return a === 0 ? null : [r, g, b];
+}
+
 export function Sidebar() {
   const [open, setOpen] = useState(false);
   // Only one sport is expanded at a time (accordion).
@@ -52,6 +73,59 @@ export function Sidebar() {
 
   const toggle = (name: string) =>
     setOpenSport((prev) => (prev === name ? null : name));
+
+  // Reactive toggle-icon color: sample the background directly behind the
+  // (closed) button and use a light icon on dark backgrounds, dark-blue on
+  // light ones. Re-samples on scroll so it adapts per section.
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const [iconOnDark, setIconOnDark] = useState(true);
+
+  useEffect(() => {
+    const btn = toggleRef.current;
+    if (!btn) return;
+    // While open, the button sits on the blue rail → keep the icon light.
+    if (open) {
+      setIconOnDark(true);
+      return;
+    }
+    const sample = () => {
+      const r = btn.getBoundingClientRect();
+      const stack = document.elementsFromPoint(
+        r.left + r.width / 2,
+        r.top + r.height / 2,
+      );
+      let rgb: [number, number, number] | null = null;
+      for (const el of stack) {
+        if (btn.contains(el)) continue;
+        rgb = cssColorToRgb(getComputedStyle(el).backgroundColor);
+        if (rgb) break; // first painted (non-transparent) background wins
+      }
+      if (!rgb) {
+        rgb =
+          cssColorToRgb(getComputedStyle(document.body).backgroundColor) ??
+          cssColorToRgb(
+            getComputedStyle(document.documentElement).backgroundColor,
+          );
+      }
+      if (!rgb) return;
+      const [red, green, blue] = rgb;
+      const luminance = (0.299 * red + 0.587 * green + 0.114 * blue) / 255;
+      setIconOnDark(luminance < 0.5);
+    };
+    let frame = 0;
+    const schedule = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(sample);
+    };
+    sample();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, [open]);
 
   const bar =
     "block h-[2px] w-[22px] rounded-full bg-current transition-all duration-300 ease-in-out";
@@ -61,11 +135,12 @@ export function Sidebar() {
       {/* Toggle button (hamburger ⇄ ✕) */}
       <button
         type="button"
+        ref={toggleRef}
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
         className={`fixed left-4 top-4 z-[6000] flex h-10 w-10 flex-col items-center justify-center gap-[5px] transition-colors ${
-          open ? "text-white" : "text-[#1c4480] dark:text-white"
+          open || iconOnDark ? "text-white" : "text-[#1c4480]"
         }`}
       >
         <span
