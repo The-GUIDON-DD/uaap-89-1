@@ -64,8 +64,8 @@ export function Sidebar() {
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
-        className={`fixed left-4 top-4 z-[6000] flex h-10 w-10 flex-col items-center justify-center gap-[5px] rounded-lg text-white transition-colors ${
-          open ? "bg-transparent" : "bg-[#1c4480]"
+        className={`fixed left-4 top-4 z-[6000] flex h-10 w-10 flex-col items-center justify-center gap-[5px] transition-colors ${
+          open ? "text-white" : "text-[#1c4480] dark:text-white"
         }`}
       >
         <span
