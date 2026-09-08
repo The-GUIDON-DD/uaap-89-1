@@ -47,7 +47,7 @@ export function Credits({
             alt="The Guidon"
             className="block h-auto w-[200px] sm:w-[240px] lg:w-[280px]"
           />
-          <h2 className="font-display text-[36px] leading-[0.9] tracking-[0.01em] sm:text-[52px] lg:text-[68px]">
+          <h2 className="font-display text-[36px] leading-[1.1] tracking-[0.01em] sm:text-[52px] lg:text-[68px]">
             <span className="block">{title}</span>
             <span className="block">{subtitle}</span>
           </h2>
@@ -57,7 +57,7 @@ export function Credits({
         <div className="mt-[32px] h-[2px] w-full bg-white" />
 
         {/* Credits — grows to fill the remaining height */}
-        <div className="mt-[32px] flex flex-1 flex-col gap-[28px] text-[12px] lg:flex-row lg:gap-[48px] lg:text-[14px]">
+        <div className="mt-[32px] flex flex-1 flex-col gap-[28px] text-[14px] lg:flex-row lg:gap-[48px] lg:text-[18px]">
           <dl className="flex shrink-0 flex-col gap-[26px] lg:w-[300px]">
             {editors.map((editor, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: order-independent credit list
@@ -72,7 +72,7 @@ export function Credits({
             ))}
           </dl>
 
-          <dl className="flex flex-1 flex-col justify-between gap-[22px]">
+          <dl className="flex flex-1 flex-col gap-[16px]">
             {sections.map((section, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: order-independent credit list
               <div key={`${section.position}-${i}`}>
