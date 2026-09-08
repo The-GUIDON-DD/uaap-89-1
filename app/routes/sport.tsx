@@ -12,7 +12,7 @@ export function meta({ params }: Route.MetaArgs) {
   return [{ title: `${prettify(params.sport)} — UAAP Season 89` }];
 }
 
-export default function Sport({ params }: Route.ComponentProps) {
+export default function SportNotFound({ params }: Route.ComponentProps) {
   const name = prettify(params.sport);
 
   return (
