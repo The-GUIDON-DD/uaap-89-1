@@ -3,6 +3,13 @@ import guidonLogo from "./assets/guidon-logo.svg";
 export type CreditEditor = { position: string; name: string };
 export type CreditSection = { position: string; names: string[] };
 
+/** Join names for display: "A", "A and B", or "A, B, and C" (Oxford comma). */
+function formatNames(names: string[]): string {
+  if (names.length <= 1) return names[0] ?? "";
+  if (names.length === 2) return `${names[0]} and ${names[1]}`;
+  return `${names.slice(0, -1).join(", ")}, and ${names[names.length - 1]}`;
+}
+
 export type CreditsProps = {
   /** First display line, e.g. "UAAP SEASON 89". */
   title?: string;
@@ -14,21 +21,66 @@ export type CreditsProps = {
   sections?: CreditSection[];
 };
 
-const placeholderNames = Array.from({ length: 10 }, () => "Name Lorem Ipsum");
-
 const defaultEditors: CreditEditor[] = [
-  { position: "POSITION EDITOR", name: "Name Lorem Ipsum" },
-  { position: "POSITION EDITOR", name: "Name Lorem Ipsum" },
-  { position: "POSITION EDITOR", name: "Name Lorem Ipsum" },
-  { position: "POSITION EDITOR", name: "Name Lorem Ipsum" },
+  { position: "Editor-in-Chief", name: "Caitlin Bernal" },
+  { position: "Associate Editor", name: "Sab Mercado" },
+  { position: "Managing Editor", name: "Annika Napiza" },
+  { position: "Design Executive Editor", name: "Aliya Delos Santos" },
 ];
 
 const defaultSections: CreditSection[] = [
-  { position: "POSITION ABCDEFG", names: placeholderNames },
-  { position: "POSITION ABCDEFG", names: placeholderNames },
-  { position: "POSITION ABCDEFG", names: placeholderNames },
-  { position: "POSITION ABCDEFG", names: placeholderNames },
-  { position: "POSITION ABCDEFG", names: placeholderNames },
+  {
+    position: "Sports Editors",
+    names: ["Carmela Therese Papa", "Ravi G. Tan"],
+  },
+  {
+    position: "Graphic Design Editors",
+    names: ["Chevin Paul Gealone", "Jacob Marcelo"],
+  },
+  { position: "Photos Editors", names: ["Bea Pador", "Sam Tadeo"] },
+  { position: "Branding", names: ["Jacob Marcelo"] },
+  { position: "Designer", names: ["Bel Baylon"] },
+  { position: "Developers", names: ["John Jerome Pardo", "Neil Biason"] },
+  {
+    position: "Writers",
+    names: [
+      "A.J. Antonio",
+      "Jules Aranjuez",
+      "Sophia Bautista",
+      "Gabrielle Binguan",
+      "Laurence Fernando",
+      "David Enrico Galvez",
+      "Jhared Ivan Isidro",
+      "Dencel Londres",
+      "Mario Quirino Manlutac",
+      "Chloe Marie Molina",
+      "Alexi Navarro",
+      "CJ Pentinio",
+      "Ella Portacio",
+      "RV Quinto",
+    ],
+  },
+  {
+    position: "Photo Credits",
+    names: [
+      "Zeb De Leon",
+      "Clarence Masilag",
+      "Derek Soronio",
+      "Adrienne Rozal",
+      "Joseph Castillo",
+      "Aidyn Grey Monteras",
+      "Enrico Jocson",
+      "Jio Japson",
+      "RJ Hernandez",
+      "Sha See",
+      "Tracy G. Rodriguez",
+      "Via Panopio",
+      "Rhian Herrera",
+      "Zyle Cadiz",
+      "Sam Tadeo",
+      "Bea Pador",
+    ],
+  },
 ];
 
 export function Credits({
@@ -39,26 +91,26 @@ export function Credits({
 }: CreditsProps = {}) {
   return (
     <footer className="flex min-h-screen w-full flex-col bg-[#194681] font-archivo text-white">
-      <div className="mx-auto flex w-full max-w-[1777px] flex-1 flex-col px-6 py-[44px] sm:px-12 lg:px-[92px]">
+      <div className="mx-auto flex w-full max-w-[1777px] flex-1 flex-col px-6 py-[22px] sm:px-12 lg:px-[92px]">
         {/* Masthead */}
-        <div className="flex flex-col gap-[24px] lg:gap-[30px]">
+        <div className="flex flex-col gap-[14px] lg:gap-[16px]">
           <img
             src={guidonLogo}
             alt="The Guidon"
-            className="block h-auto w-[200px] sm:w-[240px] lg:w-[280px]"
+            className="block h-auto w-[180px] sm:w-[210px] lg:w-[232px]"
           />
-          <h2 className="font-display text-[36px] leading-[1.1] tracking-[0.01em] sm:text-[52px] lg:text-[68px]">
+          <h2 className="font-display text-[32px] leading-[1.1] tracking-[0.01em] sm:text-[46px] lg:text-[56px]">
             <span className="block">{title}</span>
             <span className="block">{subtitle}</span>
           </h2>
         </div>
 
         {/* Divider */}
-        <div className="mt-[32px] h-[2px] w-full bg-white" />
+        <div className="mt-[16px] h-[2px] w-full bg-white" />
 
         {/* Credits — grows to fill the remaining height */}
-        <div className="mt-[32px] flex flex-1 flex-col gap-[28px] text-[14px] lg:flex-row lg:gap-[48px] lg:text-[18px]">
-          <dl className="flex shrink-0 flex-col gap-[26px] lg:w-[300px]">
+        <div className="mt-[16px] flex flex-1 flex-col gap-[24px] text-[13px] lg:flex-row lg:gap-[40px] lg:text-[14px]">
+          <dl className="flex shrink-0 flex-col gap-[14px] lg:w-[240px]">
             {editors.map((editor, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: order-independent credit list
               <div key={`${editor.position}-${i}`}>
@@ -72,7 +124,7 @@ export function Credits({
             ))}
           </dl>
 
-          <dl className="flex flex-1 flex-col gap-[16px]">
+          <dl className="flex flex-1 flex-col gap-[10px]">
             {sections.map((section, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: order-independent credit list
               <div key={`${section.position}-${i}`}>
@@ -80,7 +132,7 @@ export function Credits({
                   {section.position}
                 </dt>
                 <dd className="font-normal leading-[1.6] text-white/85">
-                  {section.names.join(", ")}
+                  {formatNames(section.names)}
                 </dd>
               </div>
             ))}
