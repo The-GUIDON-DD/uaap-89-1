@@ -34,14 +34,6 @@ const defaultSections: CreditSection[] = [
     names: ["Carmela Therese Papa", "Ravi G. Tan"],
   },
   {
-    position: "Graphic Design Editors",
-    names: ["Chevin Paul Gealone", "Jacob Marcelo"],
-  },
-  { position: "Photos Editors", names: ["Bea Pador", "Sam Tadeo"] },
-  { position: "Branding", names: ["Jacob Marcelo"] },
-  { position: "Designer", names: ["Bel Baylon"] },
-  { position: "Developers", names: ["John Jerome Pardo", "Neil Biason"] },
-  {
     position: "Writers",
     names: [
       "A.J. Antonio",
@@ -60,6 +52,7 @@ const defaultSections: CreditSection[] = [
       "RV Quinto",
     ],
   },
+  { position: "Photos Editors", names: ["Bea Pador", "Sam Tadeo"] },
   {
     position: "Photo Credits",
     names: [
@@ -81,6 +74,13 @@ const defaultSections: CreditSection[] = [
       "Bea Pador",
     ],
   },
+  {
+    position: "Graphic Design Editors",
+    names: ["Chevin Paul Gealone", "Jacob Marcelo"],
+  },
+  { position: "Branding", names: ["Jacob Marcelo"] },
+  { position: "Designer", names: ["Bel Baylon"] },
+  { position: "Developers", names: ["John Jerome Pardo", "Neil Biason"] },
 ];
 
 export function Credits({
