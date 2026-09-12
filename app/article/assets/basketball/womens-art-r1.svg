@@ -1,0 +1,14 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="389" height="627.78" viewBox="0 0 389 627.78" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 14">
+<g id="feather-long">
+<path id="feather-long_2" d="M60.2805 627.78H0C0 627.78 326.583 154.387 339.555 140.042C352.526 125.696 358.783 126 389 126.001C385.185 133.325 223.231 360.102 218.231 373.532C214.807 382.726 220.107 398.148 202.817 423.588C164.444 480.053 60.2805 627.78 60.2805 627.78Z" fill="url(#paint0_linear_0_148)"/>
+</g>
+<line id="Line 13" x1="369.964" y1="0.896325" x2="233.388" y2="212.37" stroke="#003876" stroke-width="3.30427"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_148" x1="375.723" y1="285.324" x2="68.9792" y2="627.931" gradientUnits="userSpaceOnUse">
+<stop offset="0.00961538" stop-color="#004283"/>
+<stop offset="1" stop-color="#000F3F"/>
+</linearGradient>
+</defs>
+</svg>

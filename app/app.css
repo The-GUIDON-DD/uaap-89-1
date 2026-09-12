@@ -5,6 +5,10 @@
     "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-archivo: "Archivo", "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Display face for the big article headings. The Figma uses "Druk Text
+     Trial" (a licensed font); Archivo Black is the closest bundled fallback.
+     Swap this line for the real face once it is licensed. */
+  --font-display: "Archivo", "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 html,
