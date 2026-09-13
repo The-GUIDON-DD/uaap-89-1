@@ -1,5 +1,5 @@
-import { animate, stagger } from "animejs";
-import { type CSSProperties, type Ref, useEffect, useRef } from "react";
+import { animate } from "animejs";
+import { type CSSProperties, useEffect, useRef } from "react";
 import { Link } from "react-router";
 
 import {
@@ -37,16 +37,11 @@ const HERO_ART: ArtLeaf[] = [
 ];
 
 /* ------------------------------------------------------------------ *
- * Motion — directional swipe-in on view (mirrored by panel side),
- * echoing the season 88 primer's parallax photo reveals and overflow-hidden
- * text wipes (title from the adjacent photo, body from above). Honors reduced-motion.
- *
- * Every panel derives its swipe direction from its layout position, so the
- * effect is fully generalized — any sport's data gets the right mirroring.
+ * Motion — the background (the black/white panels themselves) never
+ * moves; only the picture and the text fade in and glide upward, once,
+ * the first time each scrolls into view (700ms, ease out). Honors
+ * prefers-reduced-motion by showing content in its final state instantly.
  * ------------------------------------------------------------------ */
-
-/** Which side an element swipes in from ("up" = vertical only). */
-type SwipeFrom = "left" | "right" | "up";
 
 /** Runs `enter` once, when `el` first scrolls into view. */
 function onInView(
@@ -75,134 +70,30 @@ const clearHidden = (el: HTMLElement | null) => {
   el.style.transform = "none";
 };
 
-/** Initial clip-reveal offset for article titles (mirrors season 88 primer). */
-const titleInitialTransform = (from: SwipeFrom) =>
-  from === "left"
-    ? "translateX(-100%)"
-    : from === "right"
-      ? "translateX(100%)"
-      : "translateY(-100%)";
-
-/**
- * Reveals a photo panel: feathers rise staggered, players swipe up, the label
- * swipes in horizontally from `from`.
- */
-function usePhotoReveal(from: "left" | "right", slideUp = 48) {
-  const panelRef = useRef<HTMLDivElement>(null);
-  const playersRef = useRef<HTMLImageElement>(null);
-  const artRef = useRef<HTMLDivElement>(null);
-  const labelRef = useRef<HTMLParagraphElement>(null);
-
-  useEffect(() => {
-    const panel = panelRef.current;
-    if (!panel) return;
-    const players = playersRef.current;
-    const label = labelRef.current;
-    const leaves = artRef.current
-      ? (Array.from(artRef.current.children) as HTMLElement[])
-      : [];
-    const dx = from === "left" ? -48 : 48;
-    const dxArt = from === "left" ? -72 : 72;
-
-    if (prefersReducedMotion()) {
-      clearHidden(players);
-      clearHidden(label);
-      leaves.forEach(clearHidden);
-      return;
-    }
-
-    return onInView(
-      panel,
-      () => {
-        // Background strands swipe in horizontally from the panel's side.
-        if (leaves.length) {
-          animate(leaves, {
-            opacity: [0, 1],
-            translateX: [`${dxArt}px`, "0px"],
-            delay: stagger(80),
-            duration: 850,
-            ease: "out(2)",
-          });
-        }
-        if (label) {
-          animate(label, {
-            opacity: [0, 1],
-            translateX: [`${dx}px`, "0px"],
-            duration: 850,
-            delay: 120,
-            ease: "out(3)",
-          });
-        }
-        // Players just swipe up and settle — no zoom.
-        if (players) {
-          animate(players, {
-            opacity: [0, 1],
-            translateY: [`${slideUp}px`, "0px"],
-            duration: 1000,
-            delay: 160,
-            ease: "out(3)",
-          });
-        }
-      },
-      0.2,
-      // Trigger a little after the panel edge enters, so tall heroes reveal
-      // once their players are actually on screen.
-      "-12% 0px -12% 0px",
-    );
-  }, [from, slideUp]);
-
-  return { panelRef, playersRef, artRef, labelRef };
-}
-
-/**
- * Reveals an article: title clips in horizontally from the adjacent photo side
- * (or vertically when `from` is `"up"`), body slides down from above. The Read
- * More button stays static — only the text animates.
- */
-function useArticleReveal(from: SwipeFrom) {
-  const ref = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const bodyRef = useRef<HTMLParagraphElement>(null);
+/** Fades `ref`'s element in and glides it upward once it scrolls into view. */
+function useReveal<T extends HTMLElement>(distance = 40) {
+  const ref = useRef<T>(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const title = titleRef.current;
-    const body = bodyRef.current;
 
     if (prefersReducedMotion()) {
-      for (const t of [title, body]) clearHidden(t);
+      clearHidden(el);
       return;
     }
 
-    return onInView(
-      el,
-      () => {
-        if (title) {
-          animate(title, {
-            ...(from === "left"
-              ? { translateX: ["-100%", "0%"] }
-              : from === "right"
-                ? { translateX: ["100%", "0%"] }
-                : { translateY: ["-100%", "0%"] }),
-            duration: 900,
-            ease: "out(3)",
-          });
-        }
-        if (body) {
-          animate(body, {
-            translateY: ["-100%", "0%"],
-            duration: 800,
-            delay: 130,
-            ease: "out(2)",
-          });
-        }
-      },
-      0.25,
-    );
-  }, [from]);
+    return onInView(el, () => {
+      animate(el, {
+        opacity: [0, 1],
+        translateY: [`${distance}px`, "0px"],
+        duration: 700,
+        ease: "out(2)",
+      });
+    });
+  }, [distance]);
 
-  return { ref, titleRef, bodyRef };
+  return ref;
 }
 
 /* ------------------------------------------------------------------ *
@@ -234,19 +125,16 @@ function ArrowRight({ className }: { className?: string }) {
 function SportLabel({
   lines,
   side,
-  labelRef,
 }: {
   lines: [string, string];
   side: "left" | "right";
-  labelRef?: Ref<HTMLParagraphElement>;
 }) {
   return (
     <p
-      ref={labelRef}
       className={`pointer-events-none absolute z-10 font-display font-black uppercase leading-[1] tracking-[-0.02em] text-white text-[clamp(1.05rem,2.1vw,40px)] ${
         side === "right" ? "text-right" : "text-left"
       }`}
-      style={{ top: "8%", [side]: "4.7%", opacity: 0 }}
+      style={{ top: "8%", [side]: "4.7%" }}
     >
       {lines[0]}
       {lines[1] && (
@@ -259,12 +147,11 @@ function SportLabel({
   );
 }
 
-/** A team hero panel: feather art, dark gradient, animated players, a label. */
+/** A team hero panel: feather art, dark gradient, players, and a label. */
 function PhotoPanel({
   team,
   label,
   labelSide,
-  from,
   hero,
   className,
   playersHeight = "h-[88%] sm:h-full",
@@ -272,17 +159,12 @@ function PhotoPanel({
   team: TeamPanel;
   label: [string, string];
   labelSide: "left" | "right";
-  /** Side the label swipes in from (derived from layout position). */
-  from: "left" | "right";
   hero?: boolean;
   className?: string;
   /** Tailwind height class for the players image. */
   playersHeight?: string;
 }) {
-  const { panelRef, playersRef, artRef, labelRef } = usePhotoReveal(
-    from,
-    hero ? 96 : 48,
-  );
+  const revealRef = useReveal<HTMLDivElement>();
   const template = hero ? HERO_ART : PANEL_ART;
   const coverW = hero
     ? "max(100cqw, calc(100cqh * 1920 / 662))"
@@ -290,71 +172,67 @@ function PhotoPanel({
 
   return (
     <div
-      ref={panelRef}
       className={`relative overflow-hidden bg-black ${className ?? ""}`}
       style={{ containerType: "size" }}
     >
-      {/* Feather art — scaled to cover the panel, centered. */}
-      <div
-        ref={artRef}
-        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-        style={{
-          aspectRatio: hero ? "1920 / 662" : "1111 / 540",
-          width: coverW,
-        }}
-      >
-        {team.art.map((src, i) => {
-          const geom = template[i];
-          if (!src || !geom) return null;
-          return (
-            <img
-              key={src}
-              src={src}
-              alt=""
-              aria-hidden="true"
-              className="absolute max-w-none select-none will-change-transform"
-              style={{
-                opacity: 0,
-                left: `${geom.left}%`,
-                top: `${geom.top}%`,
-                width: `${geom.width}%`,
-                height: `${geom.height}%`,
-              }}
-            />
-          );
-        })}
-      </div>
-
-      {/* Dark gradient at the base for label/photo contrast. */}
-      <div
-        className="pointer-events-none absolute bottom-0 left-0 h-[42%] w-full opacity-50 mix-blend-multiply"
-        style={{ background: "linear-gradient(to top, #000, rgba(0,0,0,0))" }}
-      />
-
-      {/* Players — sized by height, centered by the wrapper (so the reveal
-          transform doesn't fight the centering). Pinwheel panels stand on the
-          bottom edge; the taller hero top-anchors so heads stay in frame. */}
-      {team.players && (
+      {/* The picture — feather art, players, base gradient, and the sport
+          label — fades in and glides upward together as one unit. The black
+          panel behind it is static and never moves. */}
+      <div ref={revealRef} className="absolute inset-0">
+        {/* Feather art — scaled to cover the panel, centered. */}
         <div
-          className={`pointer-events-none absolute left-1/2 -translate-x-1/2 ${
-            hero ? "top-[4%]" : "bottom-0"
-          } ${playersHeight}`}
+          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          style={{
+            aspectRatio: hero ? "1920 / 662" : "1111 / 540",
+            width: coverW,
+          }}
         >
-          <img
-            ref={playersRef}
-            src={team.players}
-            alt={team.playersAlt}
-            className="block h-full w-auto max-w-none select-none will-change-transform"
-            style={{ opacity: 0 }}
-          />
+          {team.art.map((src, i) => {
+            const geom = template[i];
+            if (!src || !geom) return null;
+            return (
+              <img
+                key={src}
+                src={src}
+                alt=""
+                aria-hidden="true"
+                className="absolute max-w-none select-none"
+                style={{
+                  left: `${geom.left}%`,
+                  top: `${geom.top}%`,
+                  width: `${geom.width}%`,
+                  height: `${geom.height}%`,
+                }}
+              />
+            );
+          })}
         </div>
-      )}
 
-      <SportLabel
-        lines={team.label ?? label}
-        side={labelSide}
-        labelRef={labelRef}
-      />
+        {/* Dark gradient at the base for label/photo contrast. */}
+        <div
+          className="pointer-events-none absolute bottom-0 left-0 h-[42%] w-full opacity-50 mix-blend-multiply"
+          style={{ background: "linear-gradient(to top, #000, rgba(0,0,0,0))" }}
+        />
+
+        {/* Players — sized by height, centered by the wrapper. Pinwheel
+            panels stand on the bottom edge; the taller hero top-anchors so
+            heads stay in frame. */}
+        {team.players && (
+          <div
+            className={`pointer-events-none absolute left-1/2 -translate-x-1/2 ${
+              hero ? "top-[4%]" : "bottom-0"
+            } ${playersHeight}`}
+          >
+            <img
+              src={team.players}
+              alt={team.playersAlt}
+              className="block h-full w-auto max-w-none select-none"
+            />
+          </div>
+        )}
+
+        <SportLabel lines={team.label ?? label} side={labelSide} />
+      </div>
     </div>
   );
 }
@@ -364,15 +242,12 @@ function ArticleContent({
   article,
   contextLabel,
   align,
-  from,
 }: {
   article: ArticleCard;
   contextLabel: string;
   align: "start" | "center";
-  /** Side the title swipes in from (derived from layout position). */
-  from: SwipeFrom;
 }) {
-  const { ref, titleRef, bodyRef } = useArticleReveal(from);
+  const revealRef = useReveal<HTMLDivElement>();
   const leadColor = article.leadColor ?? PRIMER_DEFAULTS.leadColor;
   const buttonColor = article.buttonColor ?? PRIMER_DEFAULTS.buttonColor;
   const buttonHover = article.buttonColor ?? PRIMER_DEFAULTS.buttonHoverColor;
@@ -380,38 +255,30 @@ function ArticleContent({
 
   return (
     <div
-      ref={ref}
       className={`flex flex-col gap-6 ${centered ? "items-center text-center lg:gap-[40px]" : "items-start lg:gap-[26px]"}`}
     >
+      {/* Title + body fade in and glide upward together; the Read More
+          button below stays static. */}
       <div
+        ref={revealRef}
         className={`flex flex-col gap-3 ${centered ? "items-center lg:gap-[22px]" : "items-start lg:gap-[16px]"}`}
       >
-        <div className="overflow-hidden">
-          <h2
-            ref={titleRef}
-            className={`font-display font-black leading-[0.9] will-change-transform ${centered ? "text-[clamp(2rem,6vw,108px)]" : "text-[clamp(1.75rem,4.6vw,76px)]"}`}
-            style={{
-              color: article.titleColor,
-              transform: titleInitialTransform(from),
-            }}
-          >
-            {article.title}
-          </h2>
-        </div>
-        <div className="overflow-hidden">
-          <p
-            ref={bodyRef}
-            className={`font-bold leading-[1.05] tracking-[-0.48px] text-[clamp(1rem,1.35vw,24px)] line-clamp-5 lg:line-clamp-4 will-change-transform ${centered ? "max-w-[52ch]" : ""}`}
-            style={{ transform: "translateY(-100%)" }}
-          >
-            {article.lead && (
-              <>
-                <span style={{ color: leadColor }}>{article.lead}</span>{" "}
-              </>
-            )}
-            <span className="font-normal text-black">{article.body}</span>
-          </p>
-        </div>
+        <h2
+          className={`font-display font-black leading-[0.9] ${centered ? "text-[clamp(2rem,6vw,108px)]" : "text-[clamp(1.75rem,4.6vw,76px)]"}`}
+          style={{ color: article.titleColor }}
+        >
+          {article.title}
+        </h2>
+        <p
+          className={`font-bold leading-[1.05] tracking-[-0.48px] text-[clamp(1rem,1.35vw,24px)] line-clamp-5 lg:line-clamp-4 ${centered ? "max-w-[52ch]" : ""}`}
+        >
+          {article.lead && (
+            <>
+              <span style={{ color: leadColor }}>{article.lead}</span>{" "}
+            </>
+          )}
+          <span className="font-normal text-black">{article.body}</span>
+        </p>
       </div>
 
       <Link
@@ -457,12 +324,10 @@ function TwoTeamLayout({ primer }: { primer: SportPrimerData }) {
         {primer.name} — {PRIMER_DEFAULTS.subtitle}
       </h1>
 
-      {/* Top-left photo → swipes from the left; top-right article title wipes in from the photo. */}
       <PhotoPanel
         team={a}
         label={primer.label}
         labelSide="right"
-        from="left"
         className="aspect-[4/5] sm:aspect-video lg:col-span-2 lg:col-start-1 lg:row-start-1 lg:aspect-auto lg:h-full"
       />
       <article className="flex flex-col justify-start bg-white px-8 py-10 font-archivo lg:col-start-3 lg:row-start-1 lg:h-full lg:px-[77px] lg:py-[48px]">
@@ -470,16 +335,13 @@ function TwoTeamLayout({ primer }: { primer: SportPrimerData }) {
           article={a.article}
           contextLabel={labelOf(a, primer.label)}
           align="start"
-          from="left"
         />
       </article>
 
-      {/* Bottom-left article title wipes in from the photo; bottom-right photo → from the right. */}
       <PhotoPanel
         team={b}
         label={primer.label}
         labelSide="left"
-        from="right"
         className="aspect-[4/5] sm:aspect-video lg:col-span-2 lg:col-start-2 lg:row-start-2 lg:aspect-auto lg:h-full"
       />
       <article className="flex flex-col justify-start bg-white px-8 py-10 font-archivo lg:col-start-1 lg:row-start-2 lg:h-full lg:px-[77px] lg:py-[48px]">
@@ -487,7 +349,6 @@ function TwoTeamLayout({ primer }: { primer: SportPrimerData }) {
           article={b.article}
           contextLabel={labelOf(b, primer.label)}
           align="start"
-          from="right"
         />
       </article>
     </main>
@@ -507,7 +368,6 @@ function OneTeamLayout({ primer }: { primer: SportPrimerData }) {
         team={a}
         label={primer.label}
         labelSide="right"
-        from="right"
         hero
         playersHeight="h-[108%] sm:h-[122%]"
         className="aspect-[4/5] sm:aspect-[1920/662] lg:aspect-auto lg:h-[61.3vh]"
@@ -517,7 +377,6 @@ function OneTeamLayout({ primer }: { primer: SportPrimerData }) {
           article={a.article}
           contextLabel={labelOf(a, primer.label)}
           align="center"
-          from="right"
         />
       </article>
     </main>
