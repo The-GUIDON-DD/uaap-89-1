@@ -15,7 +15,7 @@ export const swimming = defineSportPrimer({
       label: ["", ""],
       art: [],
       article: {
-        title: "Men’s Sports Article Title",
+        title: "Men’s Sports Title",
         titleColor: "#a30095",
         lead: "LOREM IPSUM",
         body: "lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis….",
