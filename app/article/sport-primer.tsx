@@ -324,13 +324,13 @@ function ArticleContent({
         className={`flex flex-col gap-3 ${centered ? "items-center lg:gap-[22px]" : "items-start lg:gap-[20px]"}`}
       >
         <h2
-          className={`font-display font-black leading-[0.9] ${centered ? "text-[clamp(2rem,5.6cqw,108px)]" : "text-[clamp(1.75rem,12.9cqw,120px)]"}`}
+          className={`font-display font-black leading-[0.9] ${centered ? "text-[clamp(2rem,6.1cqw,108px)]" : "text-[clamp(1.75rem,16.1cqw,120px)]"}`}
           style={{ color: shownArticle.titleColor }}
         >
           {shownArticle.title}
         </h2>
         <p
-          className={`font-bold leading-[1.05] tracking-[-0.48px] line-clamp-5 lg:line-clamp-4 ${centered ? "max-w-[52ch] text-[clamp(1rem,1.35cqw,24px)]" : "text-[clamp(1rem,3cqw,26px)]"}`}
+          className={`font-bold leading-[1.05] tracking-[-0.48px] line-clamp-5 lg:line-clamp-4 ${centered ? "max-w-[52ch] text-[clamp(1rem,1.4cqw,24px)]" : "text-[clamp(1rem,3.7cqw,26px)]"}`}
         >
           {shownArticle.lead && (
             <>
