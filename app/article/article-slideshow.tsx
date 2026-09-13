@@ -8,9 +8,10 @@ import type { SportPrimer as SportPrimerData } from "./types";
  * Tailwind's `lg` breakpoint, which the primer layouts switch on too. */
 const DESKTOP_QUERY = "(min-width: 1024px)";
 
-/** How long the fade + glide-up transition takes, so a wheel/touch gesture
- * during it doesn't skip a slide. Matches sport-primer.tsx's reveal. */
-const TRANSITION_MS = 700;
+/** How long a full crossfade takes (fade-out + fade-in, see
+ * sport-primer.tsx's useReveal), so a wheel/touch gesture during one
+ * doesn't skip a slide. */
+const TRANSITION_MS = 1000;
 
 /**
  * The homepage is "just one slide": on desktop the frame never moves — only
@@ -105,10 +106,15 @@ export function ArticleSlideshow({ primers }: { primers: SportPrimerData[] }) {
     );
   }
 
-  const primer = primers[index];
+  // No `key` here: the SAME SportPrimer instance stays mounted across
+  // slides and just receives new data, so PhotoPanel/ArticleContent can
+  // crossfade their content instead of the whole tree hard-cutting on
+  // unmount/remount. (It still remounts internally at the one point the
+  // layout itself changes shape — a 2-team pinwheel sport next to the
+  // 1-team hero — since those are structurally different trees.)
   return (
     <div className="fixed inset-0 h-dvh w-full overflow-hidden">
-      <SportPrimer key={primer.slug} primer={primer} />
+      <SportPrimer primer={primers[index]} />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { animate } from "animejs";
-import { type CSSProperties, useEffect, useRef } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 
 import {
@@ -38,9 +38,18 @@ const HERO_ART: ArtLeaf[] = [
 
 /* ------------------------------------------------------------------ *
  * Motion — the background (the black/white panels themselves) never
- * moves; only the picture and the text fade in and glide upward, once,
- * the first time each scrolls into view (700ms, ease out). Honors
- * prefers-reduced-motion by showing content in its final state instantly.
+ * moves; only the picture and the text move. Two triggers share the same
+ * fade + glide-up (700ms, ease out):
+ *
+ *  1. First time the element scrolls into view (the mobile stacked
+ *     layout, and the very first slide on desktop) — fades straight in.
+ *  2. Its data changes while already on screen (the desktop slideshow
+ *     swapping sports) — briefly fades out first, swaps the content,
+ *     then fades the new content back in. Same element the whole time,
+ *     so the transition is a real crossfade, not a hard cut.
+ *
+ * Honors prefers-reduced-motion by showing content in its final state
+ * instantly either way.
  * ------------------------------------------------------------------ */
 
 /** Runs `enter` once, when `el` first scrolls into view. */
@@ -70,30 +79,81 @@ const clearHidden = (el: HTMLElement | null) => {
   el.style.transform = "none";
 };
 
-/** Fades `ref`'s element in and glides it upward once it scrolls into view. */
-function useReveal<T extends HTMLElement>(distance = 40) {
-  const ref = useRef<T>(null);
+const FADE_OUT_MS = 260;
+const REVEAL_MS = 700;
+
+/**
+ * Reveals `value` on `ref`'s element (fade in + glide up) the first time it
+ * scrolls into view, and crossfades to a new `value` (fade out, swap, fade
+ * in) on every change after that. Returns the ref to attach and the value
+ * that should actually be rendered right now — it briefly lags behind
+ * `value` during the fade-out half of a swap.
+ */
+function useReveal<T>(value: T, distance = 40) {
+  const ref = useRef<HTMLDivElement>(null);
+  const shown = useRef(value);
+  const enteredView = useRef(false);
+  const [rendered, setRendered] = useState(value);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
+    if (shown.current !== value) {
+      // Data changed. If we're not on screen yet, just swap silently —
+      // onInView (below) will reveal whichever value is current once it is.
+      if (!enteredView.current) {
+        shown.current = value;
+        setRendered(value);
+        return;
+      }
+      if (prefersReducedMotion()) {
+        shown.current = value;
+        setRendered(value);
+        return;
+      }
+      animate(el, {
+        opacity: [1, 0],
+        duration: FADE_OUT_MS,
+        ease: "out(2)",
+      });
+      // A plain timer (not animejs's onComplete) drives the swap — it fires
+      // reliably regardless of tab focus/throttling, which pausing the
+      // animation itself can't corrupt (the fade-out's final frame still
+      // lands on opacity 0 whenever the tab does get to render it).
+      const timer = window.setTimeout(() => {
+        shown.current = value;
+        setRendered(value);
+        animate(el, {
+          opacity: [0, 1],
+          translateY: [`${distance}px`, "0px"],
+          duration: REVEAL_MS,
+          ease: "out(2)",
+        });
+      }, FADE_OUT_MS);
+      return () => {
+        window.clearTimeout(timer);
+      };
+    }
+
+    if (enteredView.current) return;
     if (prefersReducedMotion()) {
+      enteredView.current = true;
       clearHidden(el);
       return;
     }
-
     return onInView(el, () => {
+      enteredView.current = true;
       animate(el, {
         opacity: [0, 1],
         translateY: [`${distance}px`, "0px"],
-        duration: 700,
+        duration: REVEAL_MS,
         ease: "out(2)",
       });
     });
-  }, [distance]);
+  }, [value, distance]);
 
-  return ref;
+  return { ref, value: rendered };
 }
 
 /* ------------------------------------------------------------------ *
@@ -131,7 +191,7 @@ function SportLabel({
 }) {
   return (
     <p
-      className={`pointer-events-none absolute z-10 font-display font-black uppercase leading-[1] tracking-[-0.02em] text-white text-[clamp(1.05rem,2.1vw,40px)] ${
+      className={`pointer-events-none absolute z-10 font-display font-black uppercase leading-[1] tracking-[-0.02em] text-white text-[clamp(1.05rem,3.6cqw,44px)] ${
         side === "right" ? "text-right" : "text-left"
       }`}
       style={{ top: "8%", [side]: "4.7%" }}
@@ -164,7 +224,7 @@ function PhotoPanel({
   /** Tailwind height class for the players image. */
   playersHeight?: string;
 }) {
-  const revealRef = useReveal<HTMLDivElement>();
+  const { ref, value: shownTeam } = useReveal(team, hero ? 56 : 40);
   const template = hero ? HERO_ART : PANEL_ART;
   const coverW = hero
     ? "max(100cqw, calc(100cqh * 1920 / 662))"
@@ -178,7 +238,7 @@ function PhotoPanel({
       {/* The picture — feather art, players, base gradient, and the sport
           label — fades in and glides upward together as one unit. The black
           panel behind it is static and never moves. */}
-      <div ref={revealRef} className="absolute inset-0">
+      <div ref={ref} className="absolute inset-0">
         {/* Feather art — scaled to cover the panel, centered. */}
         <div
           className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -187,7 +247,7 @@ function PhotoPanel({
             width: coverW,
           }}
         >
-          {team.art.map((src, i) => {
+          {shownTeam.art.map((src, i) => {
             const geom = template[i];
             if (!src || !geom) return null;
             return (
@@ -217,21 +277,21 @@ function PhotoPanel({
         {/* Players — sized by height, centered by the wrapper. Pinwheel
             panels stand on the bottom edge; the taller hero top-anchors so
             heads stay in frame. */}
-        {team.players && (
+        {shownTeam.players && (
           <div
             className={`pointer-events-none absolute left-1/2 -translate-x-1/2 ${
               hero ? "top-[4%]" : "bottom-0"
             } ${playersHeight}`}
           >
             <img
-              src={team.players}
-              alt={team.playersAlt}
+              src={shownTeam.players}
+              alt={shownTeam.playersAlt}
               className="block h-full w-auto max-w-none select-none"
             />
           </div>
         )}
 
-        <SportLabel lines={team.label ?? label} side={labelSide} />
+        <SportLabel lines={shownTeam.label ?? label} side={labelSide} />
       </div>
     </div>
   );
@@ -247,37 +307,37 @@ function ArticleContent({
   contextLabel: string;
   align: "start" | "center";
 }) {
-  const revealRef = useReveal<HTMLDivElement>();
-  const leadColor = article.leadColor ?? PRIMER_DEFAULTS.leadColor;
+  const { ref, value: shownArticle } = useReveal(article, 40);
+  const leadColor = shownArticle.leadColor ?? PRIMER_DEFAULTS.leadColor;
   const buttonColor = article.buttonColor ?? PRIMER_DEFAULTS.buttonColor;
   const buttonHover = article.buttonColor ?? PRIMER_DEFAULTS.buttonHoverColor;
   const centered = align === "center";
 
   return (
     <div
-      className={`flex flex-col gap-6 ${centered ? "items-center text-center lg:gap-[40px]" : "items-start lg:gap-[26px]"}`}
+      className={`flex flex-col gap-8 ${centered ? "items-center text-center lg:gap-[48px]" : "items-start lg:gap-[40px]"}`}
     >
       {/* Title + body fade in and glide upward together; the Read More
           button below stays static. */}
       <div
-        ref={revealRef}
-        className={`flex flex-col gap-3 ${centered ? "items-center lg:gap-[22px]" : "items-start lg:gap-[16px]"}`}
+        ref={ref}
+        className={`flex flex-col gap-3 ${centered ? "items-center lg:gap-[22px]" : "items-start lg:gap-[20px]"}`}
       >
         <h2
-          className={`font-display font-black leading-[0.9] ${centered ? "text-[clamp(2rem,6vw,108px)]" : "text-[clamp(1.75rem,4.6vw,76px)]"}`}
-          style={{ color: article.titleColor }}
+          className={`font-display font-black leading-[0.9] ${centered ? "text-[clamp(2rem,5.6cqw,108px)]" : "text-[clamp(1.75rem,12.9cqw,120px)]"}`}
+          style={{ color: shownArticle.titleColor }}
         >
-          {article.title}
+          {shownArticle.title}
         </h2>
         <p
-          className={`font-bold leading-[1.05] tracking-[-0.48px] text-[clamp(1rem,1.35vw,24px)] line-clamp-5 lg:line-clamp-4 ${centered ? "max-w-[52ch]" : ""}`}
+          className={`font-bold leading-[1.05] tracking-[-0.48px] line-clamp-5 lg:line-clamp-4 ${centered ? "max-w-[52ch] text-[clamp(1rem,1.35cqw,24px)]" : "text-[clamp(1rem,3cqw,26px)]"}`}
         >
-          {article.lead && (
+          {shownArticle.lead && (
             <>
-              <span style={{ color: leadColor }}>{article.lead}</span>{" "}
+              <span style={{ color: leadColor }}>{shownArticle.lead}</span>{" "}
             </>
           )}
-          <span className="font-normal text-black">{article.body}</span>
+          <span className="font-normal text-black">{shownArticle.body}</span>
         </p>
       </div>
 
@@ -330,7 +390,10 @@ function TwoTeamLayout({ primer }: { primer: SportPrimerData }) {
         labelSide="right"
         className="aspect-[4/5] sm:aspect-video lg:col-span-2 lg:col-start-1 lg:row-start-1 lg:aspect-auto lg:h-full"
       />
-      <article className="flex flex-col justify-start bg-white px-8 py-10 font-archivo lg:col-start-3 lg:row-start-1 lg:h-full lg:px-[77px] lg:py-[48px]">
+      <article
+        className="flex flex-col justify-center bg-white px-8 py-10 font-archivo lg:col-start-3 lg:row-start-1 lg:h-full lg:px-[80px] lg:py-[64px]"
+        style={{ containerType: "inline-size" }}
+      >
         <ArticleContent
           article={a.article}
           contextLabel={labelOf(a, primer.label)}
@@ -344,7 +407,10 @@ function TwoTeamLayout({ primer }: { primer: SportPrimerData }) {
         labelSide="left"
         className="aspect-[4/5] sm:aspect-video lg:col-span-2 lg:col-start-2 lg:row-start-2 lg:aspect-auto lg:h-full"
       />
-      <article className="flex flex-col justify-start bg-white px-8 py-10 font-archivo lg:col-start-1 lg:row-start-2 lg:h-full lg:px-[77px] lg:py-[48px]">
+      <article
+        className="flex flex-col justify-center bg-white px-8 py-10 font-archivo lg:col-start-1 lg:row-start-2 lg:h-full lg:px-[80px] lg:py-[64px]"
+        style={{ containerType: "inline-size" }}
+      >
         <ArticleContent
           article={b.article}
           contextLabel={labelOf(b, primer.label)}
@@ -372,7 +438,10 @@ function OneTeamLayout({ primer }: { primer: SportPrimerData }) {
         playersHeight="h-[108%] sm:h-[122%]"
         className="aspect-[4/5] sm:aspect-[1920/662] lg:aspect-auto lg:h-[61.3vh]"
       />
-      <article className="flex flex-col items-center bg-white px-8 py-14 font-archivo lg:flex-1 lg:justify-center lg:px-[77px]">
+      <article
+        className="flex flex-col items-center bg-white px-8 py-14 font-archivo lg:flex-1 lg:justify-center lg:px-[77px]"
+        style={{ containerType: "inline-size" }}
+      >
         <ArticleContent
           article={a.article}
           contextLabel={labelOf(a, primer.label)}
