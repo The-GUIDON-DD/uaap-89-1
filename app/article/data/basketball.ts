@@ -11,11 +11,11 @@ import womensPlayers from "../assets/basketball/womens-players.png";
 import { defineSportPrimer } from "../types";
 
 /**
- * Basketball primer (two teams → pinwheel layout).
+ * Basketball primer (two teams, pinwheel layout).
  *
- * This file is the single edit point for Basketball. Change any text, color,
- * link, or swap an image import above — nothing else needs to be touched.
- * Field-by-field docs live on the types in `../types.ts`.
+ * Single edit point for Basketball. Change any text, color, link, or swap
+ * an image import above, nothing else needs to be touched. Field-by-field
+ * docs live on the types in `../types.ts`.
  */
 export const basketball = defineSportPrimer({
   slug: "basketball",
@@ -23,7 +23,7 @@ export const basketball = defineSportPrimer({
   // Sport label shown on the photos (two lines). Teams override it below.
   label: ["", "BASKETBALL"],
   teams: [
-    // ── Team 1 · top-left photo + top-right article ──────────────────────
+    // Team 1: top-left photo, top-right article.
     {
       players: mensPlayers,
       playersAlt: "Ateneo Men’s Basketball players",
@@ -35,10 +35,10 @@ export const basketball = defineSportPrimer({
         lead: "AFTER AN",
         body: "offseason marked by the loss of their beloved teammates Divine Adili and Rene Baterbonia, the Ateneo Men’s Basketball Team heads into Season 89 with…",
         to: "/sports/mens-basketball",
-        // readMore / buttonColor are optional — default to "Read More" + gold.
+        // readMore and buttonColor are optional. Default to "Read More" and gold.
       },
     },
-    // ── Team 2 · bottom-right photo + bottom-left article ────────────────
+    // Team 2: bottom-right photo, bottom-left article.
     {
       players: womensPlayers,
       playersAlt: "Ateneo Women’s Basketball players",

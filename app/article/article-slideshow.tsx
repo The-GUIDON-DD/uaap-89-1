@@ -2,26 +2,20 @@ import { useEffect, useRef, useState } from "react";
 import { SportPrimer } from "./sport-primer";
 import type { SportPrimer as SportPrimerData } from "./types";
 
-/** Below this width, scroll-locking a full-screen slideshow doesn't work
- * well (no room for the pinwheel, touch scroll expectations differ) — fall
- * back to a normal, naturally-scrolling stack of sections instead. Matches
- * Tailwind's `lg` breakpoint, which the primer layouts switch on too. */
+/** Below this width, scroll-lock falls back to a normal stack of sections.
+ * Matches Tailwind's `lg` breakpoint, same as the primer layouts. */
 const DESKTOP_QUERY = "(min-width: 1024px)";
 
-/** How long a full crossfade takes (fade-out + fade-in, see
- * sport-primer.tsx's useReveal), so a wheel/touch gesture during one
- * doesn't skip a slide. */
+/** Full crossfade duration, fade out plus fade in, from useReveal in
+ * sport-primer.tsx. A wheel or touch gesture during one is ignored. */
 const TRANSITION_MS = 1000;
 
 /**
- * The homepage is "just one slide": on desktop the frame never moves — only
- * the current sport's picture and text fade in and glide upward (700ms ease
- * out) as the user scrolls. A wheel tick, swipe, or arrow key advances to
- * the next/previous sport instead of actually scrolling the page.
+ * On desktop the frame never moves. Only the current sport's picture and
+ * text change. A wheel tick, swipe, or arrow key advances to the next or
+ * previous sport instead of scrolling the page.
  *
- * On narrow screens (below `lg`) this instead renders every sport as a
- * normal, naturally-scrolling stack — locking scroll doesn't translate well
- * to touch-scrolling a small screen.
+ * Below `lg`, renders every sport as a normal scrolling stack instead.
  */
 export function ArticleSlideshow({ primers }: { primers: SportPrimerData[] }) {
   const [isDesktop, setIsDesktop] = useState(false);
@@ -106,12 +100,9 @@ export function ArticleSlideshow({ primers }: { primers: SportPrimerData[] }) {
     );
   }
 
-  // No `key` here: the SAME SportPrimer instance stays mounted across
-  // slides and just receives new data, so PhotoPanel/ArticleContent can
-  // crossfade their content instead of the whole tree hard-cutting on
-  // unmount/remount. (It still remounts internally at the one point the
-  // layout itself changes shape — a 2-team pinwheel sport next to the
-  // 1-team hero — since those are structurally different trees.)
+  // No key: SportPrimer stays mounted across slides so its children can
+  // crossfade instead of hard-cutting on remount. Still remounts when the
+  // layout shape changes, pinwheel to hero.
   return (
     <div className="fixed inset-0 h-dvh w-full overflow-hidden">
       <SportPrimer primer={primers[index]} />

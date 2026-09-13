@@ -10,7 +10,7 @@ import { tableTennis } from "../article/data/table-tennis";
 import { trackAndField } from "../article/data/track-and-field";
 import type { SportPrimer as SportPrimerData } from "../article/types";
 
-// Order sports appear on the homepage. Reorder freely — each entry is
+// Order sports appear on the homepage. Reorder freely, each entry is
 // self-contained data, nothing else needs to change.
 const primers: SportPrimerData[] = [
   basketball,

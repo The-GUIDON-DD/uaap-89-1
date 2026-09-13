@@ -1,5 +1,5 @@
 /**
- * Data model for a sport's article "primer" — this is the ONE place to edit a
+ * Data model for a sport's article "primer". The one place to edit a
  * sport's content. Everything the reusable `<SportPrimer>` renders (labels,
  * titles, colors, copy, links, images) comes from a `SportPrimer` object; see
  * `data/basketball.ts` (two teams) and `data/cheerdance.ts` (one team) for
@@ -51,7 +51,7 @@ export type TeamPanel = {
   label?: [string, string];
 };
 
-/** A full sport page — one or two teams. */
+/** A full sport page, one or two teams. */
 export type SportPrimer = {
   /** URL slug, e.g. "basketball". */
   slug: string;
@@ -63,7 +63,7 @@ export type SportPrimer = {
   teams: [TeamPanel] | [TeamPanel, TeamPanel];
 };
 
-/** Season-wide copy + brand defaults — edit here to change every primer at once. */
+/** Season-wide copy and brand defaults. Edit here to change every primer at once. */
 export const PRIMER_DEFAULTS = {
   /** Appended to each page's screen-reader heading. */
   subtitle: "UAAP Season 89 First Semester Primer",

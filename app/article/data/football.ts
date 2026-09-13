@@ -3,14 +3,14 @@ import womensPlayers from "../assets/football/womens-players.jpg";
 import { defineSportPrimer } from "../types";
 
 /**
- * Football primer (two teams → pinwheel layout).
+ * Football primer (two teams, pinwheel layout).
  *
- * Unlike Basketball/Cheerdance, no isolated player cutout or feather-art SVGs
- * exist yet for this sport — each team's image is the flattened Figma export
- * (players + background art baked into one photo), so `art` is empty and
- * `label` is blank to avoid double-drawing the label already baked into the
- * image. Swap in real transparent cutouts + art later the same way Basketball
- * was done, no other changes needed.
+ * Unlike Basketball and Cheerdance, no isolated player cutout or feather-art
+ * SVGs exist yet for this sport. Each team's image is the flattened Figma
+ * export (players and background art baked into one photo), so `art` is
+ * empty and `label` is blank to avoid double-drawing the label already baked
+ * into the image. Swap in real transparent cutouts and art later the same
+ * way Basketball was done, no other changes needed.
  */
 export const football = defineSportPrimer({
   slug: "football",

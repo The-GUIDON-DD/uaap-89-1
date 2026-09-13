@@ -14,8 +14,8 @@ const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ------------------------------------------------------------------ *
- * Feather-art geometry — positions in % of the design box. Every sport
- * reuses these and only supplies its own recolored SVGs: [left, r1, r2, r3].
+ * Feather art positions, in percent of the design box. Shared by every
+ * sport; each sport only supplies its own SVGs: [left, r1, r2, r3].
  * ------------------------------------------------------------------ */
 
 type ArtLeaf = { left: number; top: number; width: number; height: number };
@@ -37,22 +37,18 @@ const HERO_ART: ArtLeaf[] = [
 ];
 
 /* ------------------------------------------------------------------ *
- * Motion — the background (the black/white panels themselves) never
- * moves; only the picture and the text move. Two triggers share the same
- * fade + glide-up (700ms, ease out):
+ * The black/white panels never move. Only the picture and text move,
+ * with the same fade and glide up, 700ms ease out:
  *
- *  1. First time the element scrolls into view (the mobile stacked
- *     layout, and the very first slide on desktop) — fades straight in.
- *  2. Its data changes while already on screen (the desktop slideshow
- *     swapping sports) — briefly fades out first, swaps the content,
- *     then fades the new content back in. Same element the whole time,
- *     so the transition is a real crossfade, not a hard cut.
+ *  1. Element scrolls into view for the first time: fades in.
+ *  2. Data changes while already on screen (desktop slideshow):
+ *     fades out, swaps content, fades back in. Same element the whole
+ *     time, so it's a real crossfade, not a hard cut.
  *
- * Honors prefers-reduced-motion by showing content in its final state
- * instantly either way.
+ * Reduced motion skips straight to the final state.
  * ------------------------------------------------------------------ */
 
-/** Runs `enter` once, when `el` first scrolls into view. */
+/** Runs enter once, when el first scrolls into view. */
 function onInView(
   el: Element,
   enter: () => void,
@@ -83,11 +79,9 @@ const FADE_OUT_MS = 260;
 const REVEAL_MS = 700;
 
 /**
- * Reveals `value` on `ref`'s element (fade in + glide up) the first time it
- * scrolls into view, and crossfades to a new `value` (fade out, swap, fade
- * in) on every change after that. Returns the ref to attach and the value
- * that should actually be rendered right now — it briefly lags behind
- * `value` during the fade-out half of a swap.
+ * Fades value in on first view, crossfades to a new value on every change
+ * after that. Returns the ref to attach and the value to render, which
+ * lags briefly behind value during a swap's fade-out.
  */
 function useReveal<T>(value: T, distance = 40) {
   const ref = useRef<HTMLDivElement>(null);
@@ -100,8 +94,8 @@ function useReveal<T>(value: T, distance = 40) {
     if (!el) return;
 
     if (shown.current !== value) {
-      // Data changed. If we're not on screen yet, just swap silently —
-      // onInView (below) will reveal whichever value is current once it is.
+      // Not visible yet, swap without animating. onInView below reveals
+      // whichever value is current once it is.
       if (!enteredView.current) {
         shown.current = value;
         setRendered(value);
@@ -117,10 +111,8 @@ function useReveal<T>(value: T, distance = 40) {
         duration: FADE_OUT_MS,
         ease: "out(2)",
       });
-      // A plain timer (not animejs's onComplete) drives the swap — it fires
-      // reliably regardless of tab focus/throttling, which pausing the
-      // animation itself can't corrupt (the fade-out's final frame still
-      // lands on opacity 0 whenever the tab does get to render it).
+      // Plain timer, not animejs's onComplete, since that doesn't fire
+      // reliably when the tab is throttled.
       const timer = window.setTimeout(() => {
         shown.current = value;
         setRendered(value);
@@ -152,6 +144,74 @@ function useReveal<T>(value: T, distance = 40) {
       });
     });
   }, [value, distance]);
+
+  return { ref, value: rendered };
+}
+
+const WIPE_OUT_MS = 300;
+const WIPE_IN_MS = 700;
+const WIPE_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
+
+const setWipe = (el: HTMLElement, shown: boolean) => {
+  el.style.clipPath = shown ? "inset(0 0 0 0%)" : "inset(0 0 0 100%)";
+};
+
+/**
+ * Reveals value on ref's element in place: a clip-path wipe that opens
+ * from the right edge toward the left, like text appearing under a
+ * curtain pulled off to the left. No fade, no movement. Fades straight
+ * to shown on first view, wipes closed then open again on later changes.
+ */
+function useWipeReveal<T, E extends HTMLElement = HTMLDivElement>(value: T) {
+  const ref = useRef<E>(null);
+  const shown = useRef(value);
+  const enteredView = useRef(false);
+  const [rendered, setRendered] = useState(value);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    if (shown.current !== value) {
+      if (!enteredView.current) {
+        shown.current = value;
+        setRendered(value);
+        return;
+      }
+      if (prefersReducedMotion()) {
+        shown.current = value;
+        setRendered(value);
+        return;
+      }
+      el.style.transition = `clip-path ${WIPE_OUT_MS}ms ease-in`;
+      setWipe(el, false);
+      const timer = window.setTimeout(() => {
+        shown.current = value;
+        setRendered(value);
+        el.style.transition = "none";
+        setWipe(el, false);
+        void el.offsetWidth;
+        el.style.transition = `clip-path ${WIPE_IN_MS}ms ${WIPE_EASE}`;
+        setWipe(el, true);
+      }, WIPE_OUT_MS);
+      return () => {
+        window.clearTimeout(timer);
+      };
+    }
+
+    if (enteredView.current) return;
+    if (prefersReducedMotion()) {
+      enteredView.current = true;
+      el.style.clipPath = "none";
+      return;
+    }
+    setWipe(el, false);
+    return onInView(el, () => {
+      enteredView.current = true;
+      el.style.transition = `clip-path ${WIPE_IN_MS}ms ${WIPE_EASE}`;
+      setWipe(el, true);
+    });
+  }, [value]);
 
   return { ref, value: rendered };
 }
@@ -235,11 +295,10 @@ function PhotoPanel({
       className={`relative overflow-hidden bg-black ${className ?? ""}`}
       style={{ containerType: "size" }}
     >
-      {/* The picture — feather art, players, base gradient, and the sport
-          label — fades in and glides upward together as one unit. The black
-          panel behind it is static and never moves. */}
+      {/* Picture: art, players, gradient, label. Fades and glides as one
+          unit. The black panel behind it stays static. */}
       <div ref={ref} className="absolute inset-0">
-        {/* Feather art — scaled to cover the panel, centered. */}
+        {/* Feather art, scaled to cover the panel, centered. */}
         <div
           className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
           style={{
@@ -274,9 +333,8 @@ function PhotoPanel({
           style={{ background: "linear-gradient(to top, #000, rgba(0,0,0,0))" }}
         />
 
-        {/* Players — sized by height, centered by the wrapper. Pinwheel
-            panels stand on the bottom edge; the taller hero top-anchors so
-            heads stay in frame. */}
+        {/* Players sized by height, centered. Pinwheel stands on the
+            bottom edge; hero anchors top so heads stay in frame. */}
         {shownTeam.players && (
           <div
             className={`pointer-events-none absolute left-1/2 -translate-x-1/2 ${
@@ -307,18 +365,22 @@ function ArticleContent({
   contextLabel: string;
   align: "start" | "center";
 }) {
-  const { ref, value: shownArticle } = useReveal(article, 40);
+  const { ref, value: shownArticle } = useWipeReveal(article);
+  const { ref: buttonRef, value: shownButton } = useWipeReveal<
+    ArticleCard,
+    HTMLAnchorElement
+  >(article);
   const leadColor = shownArticle.leadColor ?? PRIMER_DEFAULTS.leadColor;
-  const buttonColor = article.buttonColor ?? PRIMER_DEFAULTS.buttonColor;
-  const buttonHover = article.buttonColor ?? PRIMER_DEFAULTS.buttonHoverColor;
+  const buttonColor = shownButton.buttonColor ?? PRIMER_DEFAULTS.buttonColor;
+  const buttonHover =
+    shownButton.buttonColor ?? PRIMER_DEFAULTS.buttonHoverColor;
   const centered = align === "center";
 
   return (
     <div
       className={`flex flex-col gap-8 ${centered ? "items-center text-center lg:gap-[48px]" : "items-start lg:gap-[40px]"}`}
     >
-      {/* Title + body fade in and glide upward together; the Read More
-          button below stays static. */}
+      {/* Title and body stay in place; a clip-path wipe reveals them. */}
       <div
         ref={ref}
         className={`flex flex-col gap-3 ${centered ? "items-center lg:gap-[22px]" : "items-start lg:gap-[20px]"}`}
@@ -342,7 +404,8 @@ function ArticleContent({
       </div>
 
       <Link
-        to={article.to}
+        ref={buttonRef}
+        to={shownButton.to}
         aria-label={`Read more: ${contextLabel}`}
         className="group flex h-[52px] w-[224px] max-w-full items-center justify-center gap-[9px] rounded-[7px] bg-[var(--btn)] text-white transition-colors hover:bg-[var(--btn-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#194681] focus-visible:ring-offset-2"
         style={
@@ -353,7 +416,7 @@ function ArticleContent({
         }
       >
         <span className="font-bold text-[20px] lg:text-[24px]">
-          {article.readMore ?? "Read More"}
+          {shownButton.readMore ?? "Read More"}
         </span>
         <ArrowRight className="transition-transform duration-200 group-hover:translate-x-1 group-focus-visible:translate-x-1" />
       </Link>
