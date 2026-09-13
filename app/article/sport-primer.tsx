@@ -48,25 +48,75 @@ const HERO_ART: ArtLeaf[] = [
  * Reduced motion skips straight to the final state.
  * ------------------------------------------------------------------ */
 
-/** Runs enter once, when el first scrolls into view. */
+/** True if at least `ratio` of el's area is already inside the viewport. */
+function isVisible(el: Element, ratio: number) {
+  const rect = el.getBoundingClientRect();
+  if (rect.width === 0 || rect.height === 0) return false;
+  const visibleW =
+    Math.min(rect.right, window.innerWidth) - Math.max(rect.left, 0);
+  const visibleH =
+    Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
+  if (visibleW <= 0 || visibleH <= 0) return false;
+  return (visibleW * visibleH) / (rect.width * rect.height) >= ratio;
+}
+
+/**
+ * Runs enter once, when el first scrolls into view. Never gets stuck:
+ * checks synchronously first (an already-on-screen element, like the
+ * current slide in the desktop slideshow, shouldn't wait on an async
+ * callback a backgrounded or unfocused tab can delay indefinitely), and
+ * if it has to wait, also rechecks on visibilitychange and after a flat
+ * timeout, since a backgrounded tab can throttle IntersectionObserver
+ * itself past the point of ever firing.
+ */
 function onInView(
   el: Element,
   enter: () => void,
   threshold = 0.2,
   rootMargin = "0px",
 ) {
+  if (isVisible(el, threshold)) {
+    enter();
+    return () => {};
+  }
+
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    cleanup();
+    enter();
+  };
+
   const io = new IntersectionObserver(
     (entries, obs) => {
       for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        obs.unobserve(entry.target);
-        enter();
+        if (entry.isIntersecting) {
+          obs.unobserve(entry.target);
+          finish();
+        }
       }
     },
     { threshold, rootMargin },
   );
   io.observe(el);
-  return () => io.disconnect();
+
+  const onVisibilityChange = () => {
+    if (!document.hidden && isVisible(el, threshold)) finish();
+  };
+  document.addEventListener("visibilitychange", onVisibilityChange);
+
+  const fallback = window.setTimeout(() => {
+    if (isVisible(el, threshold)) finish();
+  }, 1500);
+
+  function cleanup() {
+    io.disconnect();
+    document.removeEventListener("visibilitychange", onVisibilityChange);
+    window.clearTimeout(fallback);
+  }
+
+  return cleanup;
 }
 
 const clearHidden = (el: HTMLElement | null) => {
