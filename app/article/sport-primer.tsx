@@ -75,19 +75,25 @@ const clearHidden = (el: HTMLElement | null) => {
   el.style.transform = "none";
 };
 
-/** Initial clip-reveal offset for article titles (mirrors season 88 primer). */
+/** Initial clip-reveal offset for article titles. "up" enters from the bottom. */
 const titleInitialTransform = (from: SwipeFrom) =>
   from === "left"
     ? "translateX(-100%)"
     : from === "right"
       ? "translateX(100%)"
-      : "translateY(-100%)";
+      : "translateY(100%)";
+
+/** Bars start offset toward the bottom-right; players start below their panel. */
+export const ART_INITIAL = "translate(60px, 84px)";
+export const PLAYERS_INITIAL = "translateY(70%)";
 
 /**
- * Reveals a photo panel: feathers rise staggered, players swipe up, the label
- * swipes in horizontally from `from`.
+ * Reveals a photo panel — no fades. The feather bars slide in from the
+ * bottom-right with staggered delays, the players rise up from the bottom
+ * (clipped by the panel), and the label clip-wipes in from its corner side.
+ * Honors reduced-motion.
  */
-function usePhotoReveal(from: "left" | "right", slideUp = 48) {
+function usePhotoReveal(labelSide: "left" | "right") {
   const panelRef = useRef<HTMLDivElement>(null);
   const playersRef = useRef<HTMLImageElement>(null);
   const artRef = useRef<HTMLDivElement>(null);
@@ -101,8 +107,7 @@ function usePhotoReveal(from: "left" | "right", slideUp = 48) {
     const leaves = artRef.current
       ? (Array.from(artRef.current.children) as HTMLElement[])
       : [];
-    const dx = from === "left" ? -48 : 48;
-    const dxArt = from === "left" ? -72 : 72;
+    const labelX = labelSide === "right" ? "105%" : "-105%";
 
     if (prefersReducedMotion()) {
       clearHidden(players);
@@ -114,32 +119,31 @@ function usePhotoReveal(from: "left" | "right", slideUp = 48) {
     return onInView(
       panel,
       () => {
-        // Background strands swipe in horizontally from the panel's side.
+        // Bars enter from the bottom-right, with varying (staggered) delays.
         if (leaves.length) {
           animate(leaves, {
-            opacity: [0, 1],
-            translateX: [`${dxArt}px`, "0px"],
-            delay: stagger(80),
-            duration: 850,
+            translateX: ["60px", "0px"],
+            translateY: ["84px", "0px"],
+            delay: stagger(110),
+            duration: 900,
             ease: "out(2)",
           });
         }
+        // Label clip-wipes in from its own corner side.
         if (label) {
           animate(label, {
-            opacity: [0, 1],
-            translateX: [`${dx}px`, "0px"],
+            translateX: [labelX, "0%"],
             duration: 850,
             delay: 120,
             ease: "out(3)",
           });
         }
-        // Players just swipe up and settle — no zoom.
+        // Players rise up from the bottom.
         if (players) {
           animate(players, {
-            opacity: [0, 1],
-            translateY: [`${slideUp}px`, "0px"],
-            duration: 1000,
-            delay: 160,
+            translateY: ["70%", "0%"],
+            duration: 1050,
+            delay: 120,
             ease: "out(3)",
           });
         }
@@ -149,7 +153,7 @@ function usePhotoReveal(from: "left" | "right", slideUp = 48) {
       // once their players are actually on screen.
       "-12% 0px -12% 0px",
     );
-  }, [from, slideUp]);
+  }, [labelSide]);
 
   return { panelRef, playersRef, artRef, labelRef };
 }
@@ -184,7 +188,7 @@ function useArticleReveal(from: SwipeFrom) {
               ? { translateX: ["-100%", "0%"] }
               : from === "right"
                 ? { translateX: ["100%", "0%"] }
-                : { translateY: ["-100%", "0%"] }),
+                : { translateY: ["100%", "0%"] }),
             duration: 900,
             ease: "out(3)",
           });
@@ -241,21 +245,30 @@ function SportLabel({
   labelRef?: Ref<HTMLParagraphElement>;
 }) {
   return (
-    <p
-      ref={labelRef}
-      className={`pointer-events-none absolute z-10 font-display font-black uppercase leading-[1] tracking-[-0.02em] text-white text-[clamp(1.05rem,2.1vw,40px)] ${
+    // Clip-mask wrapper so the label wipes in from its corner (no fade).
+    <div
+      className={`pointer-events-none absolute z-10 overflow-hidden ${
         side === "right" ? "text-right" : "text-left"
       }`}
-      style={{ top: "8%", [side]: "4.7%", opacity: 0 }}
+      style={{ top: "8%", [side]: "4.7%" }}
     >
-      {lines[0]}
-      {lines[1] && (
-        <>
-          <br />
-          {lines[1]}
-        </>
-      )}
-    </p>
+      <p
+        ref={labelRef}
+        className="font-display font-black uppercase leading-[1] tracking-[-0.02em] text-white text-[clamp(1.05rem,2.1vw,40px)] will-change-transform"
+        style={{
+          transform:
+            side === "right" ? "translateX(105%)" : "translateX(-105%)",
+        }}
+      >
+        {lines[0]}
+        {lines[1] && (
+          <>
+            <br />
+            {lines[1]}
+          </>
+        )}
+      </p>
+    </div>
   );
 }
 
@@ -264,7 +277,6 @@ function PhotoPanel({
   team,
   label,
   labelSide,
-  from,
   hero,
   className,
   playersHeight = "h-[88%] sm:h-full",
@@ -272,17 +284,12 @@ function PhotoPanel({
   team: TeamPanel;
   label: [string, string];
   labelSide: "left" | "right";
-  /** Side the label swipes in from (derived from layout position). */
-  from: "left" | "right";
   hero?: boolean;
   className?: string;
   /** Tailwind height class for the players image. */
   playersHeight?: string;
 }) {
-  const { panelRef, playersRef, artRef, labelRef } = usePhotoReveal(
-    from,
-    hero ? 96 : 48,
-  );
+  const { panelRef, playersRef, artRef, labelRef } = usePhotoReveal(labelSide);
   const template = hero ? HERO_ART : PANEL_ART;
   const coverW = hero
     ? "max(100cqw, calc(100cqh * 1920 / 662))"
@@ -314,7 +321,7 @@ function PhotoPanel({
               aria-hidden="true"
               className="absolute max-w-none select-none will-change-transform"
               style={{
-                opacity: 0,
+                transform: ART_INITIAL,
                 left: `${geom.left}%`,
                 top: `${geom.top}%`,
                 width: `${geom.width}%`,
@@ -345,7 +352,7 @@ function PhotoPanel({
             src={team.players}
             alt={team.playersAlt}
             className="block h-full w-auto max-w-none select-none will-change-transform"
-            style={{ opacity: 0 }}
+            style={{ transform: PLAYERS_INITIAL }}
           />
         </div>
       )}
@@ -428,7 +435,7 @@ function ArticleContent({
         <span className="font-bold text-[20px] lg:text-[24px]">
           {article.readMore ?? "Read More"}
         </span>
-        <ArrowRight className="transition-transform duration-200 group-hover:translate-x-1 group-focus-visible:translate-x-1" />
+        <ArrowRight className="transition-transform duration-200 group-hover:translate-x-1.5 group-focus-visible:translate-x-1.5" />
       </Link>
     </div>
   );
@@ -457,12 +464,11 @@ function TwoTeamLayout({ primer }: { primer: SportPrimerData }) {
         {primer.name} — {PRIMER_DEFAULTS.subtitle}
       </h1>
 
-      {/* Top-left photo → swipes from the left; top-right article title wipes in from the photo. */}
+      {/* Top-left photo; top-right article title wipes in from the left. */}
       <PhotoPanel
         team={a}
         label={primer.label}
         labelSide="right"
-        from="left"
         className="aspect-[4/5] sm:aspect-video lg:col-span-2 lg:col-start-1 lg:row-start-1 lg:aspect-auto lg:h-full"
       />
       <article className="flex flex-col justify-start bg-white px-8 py-10 font-archivo lg:col-start-3 lg:row-start-1 lg:h-full lg:px-[77px] lg:py-[48px]">
@@ -474,12 +480,11 @@ function TwoTeamLayout({ primer }: { primer: SportPrimerData }) {
         />
       </article>
 
-      {/* Bottom-left article title wipes in from the photo; bottom-right photo → from the right. */}
+      {/* Bottom-left article title wipes in from the left; bottom-right photo. */}
       <PhotoPanel
         team={b}
         label={primer.label}
         labelSide="left"
-        from="right"
         className="aspect-[4/5] sm:aspect-video lg:col-span-2 lg:col-start-2 lg:row-start-2 lg:aspect-auto lg:h-full"
       />
       <article className="flex flex-col justify-start bg-white px-8 py-10 font-archivo lg:col-start-1 lg:row-start-2 lg:h-full lg:px-[77px] lg:py-[48px]">
@@ -487,7 +492,7 @@ function TwoTeamLayout({ primer }: { primer: SportPrimerData }) {
           article={b.article}
           contextLabel={labelOf(b, primer.label)}
           align="start"
-          from="right"
+          from="left"
         />
       </article>
     </main>
@@ -507,7 +512,6 @@ function OneTeamLayout({ primer }: { primer: SportPrimerData }) {
         team={a}
         label={primer.label}
         labelSide="right"
-        from="right"
         hero
         playersHeight="h-[108%] sm:h-[122%]"
         className="aspect-[4/5] sm:aspect-[1920/662] lg:aspect-auto lg:h-[61.3vh]"
@@ -517,7 +521,7 @@ function OneTeamLayout({ primer }: { primer: SportPrimerData }) {
           article={a.article}
           contextLabel={labelOf(a, primer.label)}
           align="center"
-          from="right"
+          from="up"
         />
       </article>
     </main>
