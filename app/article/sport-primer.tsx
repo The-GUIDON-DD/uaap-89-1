@@ -279,7 +279,7 @@ function PhotoPanel({
   labelSide,
   hero,
   className,
-  playersHeight = "h-[88%] sm:h-full",
+  playersHeight = "h-[82%] sm:h-[88%]",
 }: {
   team: TeamPanel;
   label: [string, string];
@@ -344,7 +344,7 @@ function PhotoPanel({
       {team.players && (
         <div
           className={`pointer-events-none absolute left-1/2 -translate-x-1/2 ${
-            hero ? "top-[4%]" : "bottom-0"
+            hero ? "top-[9%]" : "bottom-0"
           } ${playersHeight}`}
         >
           <img
