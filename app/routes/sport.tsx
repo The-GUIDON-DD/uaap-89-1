@@ -12,7 +12,7 @@ export function meta({ params }: Route.MetaArgs) {
   return [{ title: `${prettify(params.sport)} — UAAP Season 89` }];
 }
 
-export default function Sport({ params }: Route.ComponentProps) {
+export default function SportNotFound({ params }: Route.ComponentProps) {
   const name = prettify(params.sport);
 
   return (
@@ -26,7 +26,7 @@ export default function Sport({ params }: Route.ComponentProps) {
       <p className="text-white/70">Coverage coming soon.</p>
       <Link
         to="/"
-        className="mt-4 rounded-lg border border-white/40 px-5 py-2 font-bold transition-colors hover:bg-white/10"
+        className="mt-4 rounded-lg px-5 py-2 font-bold transition-colors hover:bg-white/10"
       >
         ← Back
       </Link>
