@@ -17,39 +17,39 @@ import { defineSportPrimer } from "../types";
  * link, or swap an image import above — nothing else needs to be touched.
  * Field-by-field docs live on the types in `../types.ts`.
  */
-export const TrackAndField = defineSportPrimer({
-  slug: "track-and-field",
-  name: "track-and-field",
+export const badminton = defineSportPrimer({
+  slug: "badminton",
+  name: "badminton",
   // Sport label shown on the photos (two lines). Teams override it below.
-  label: ["", "Track and Field"],
+  label: ["", "badminton"],
   teams: [
     // ── Team 1 · top-left photo + top-right article ──────────────────────
     {
       players: mensPlayers,
-      playersAlt: "Ateneo Men’s Track and Field players",
-      label: ["MEN’S", "Track and Field"],
+      playersAlt: "Ateneo Men’s Badminton players",
+      label: ["MEN’S", "Badminton"],
       art: [mensArtLeft, mensArtR1, mensArtR2, mensArtR3],
       article: {
-        title: "Unfinished Business",
+        title: "The Standard Bearers",
         titleColor: "#a30095",
-        lead: "FOUR STRAIGHT",
-        body: "silver finishes have only deepened the Ateneo Men's Table Tennis Team's (AMTTT) desire to finally bring home the gold.",
-        to: "/sports/mens-track-and-field",
+        lead: "HAVING RETURNED",
+        body: "to the mountaintop last season, the Ateneo Men’s Badminton Team is primed to defend the throne and claim back-to-back status as UAAP champions.",
+        to: "/sports/mens-badminton",
         // readMore / buttonColor are optional — default to "Read More" + gold.
       },
     },
     // ── Team 2 · bottom-right photo + bottom-left article ────────────────
     {
       players: womensPlayers,
-      playersAlt: "Ateneo Women’s Track and Field players",
-      label: ["WOMEN’S", "Track and Field"],
+      playersAlt: "Ateneo Women’s Badminton players",
+      label: ["WOMEN’S", "Badminton"],
       art: [womensArtLeft, womensArtR1, womensArtR2, womensArtR3],
       article: {
-        title: "Making The Leap",
+        title: "Greater Than Greatness",
         titleColor: "#00bf9d",
-        lead: "LOOKING TO",
-        body: "fight their way back to the top, the Ateneo Women’s Table Tennis Team (AWTTT) enters Season 89 fixed on securing a championship after their short-lived Final Four stint last season.",
-        to: "/sports/womens-track-and-field",
+        lead: "A CHAMPIONSHIP",
+        body: "solidifies legacies for teams, but five championships over a six-year span set dynasties in writing forever. For the Ateneo Women’s Badminton Team, it signals the start of an era of dominance.",
+        to: "/sports/womens-badminton",
       },
     },
   ],
