@@ -1,5 +1,3 @@
-import { motion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
 import { EditorsMessage } from "~/editors-message/editors-message";
 import { FrontPage } from "~/front-page/front-page";
 import { badminton } from "../article/data/badminton";
@@ -25,6 +23,9 @@ export default function Home() {
     <main>
       <div className="h-dvh w-full snap-start">
         <FrontPage />
+      </div>
+      <div className="h-dvh w-full snap-start">
+        <EditorsMessage />
       </div>
       <section>
         <SportPrimer primer={basketball} />

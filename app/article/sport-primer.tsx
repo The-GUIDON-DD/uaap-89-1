@@ -396,7 +396,7 @@ function ArticleContent({
         <div className="overflow-hidden">
           <h2
             ref={titleRef}
-            className={`font-display font-black leading-[0.9] will-change-transform ${centered ? "text-[clamp(2rem,6vw,108px)]" : "text-[clamp(1.75rem,4.6vw,76px)]"}`}
+            className={`font-display font-black leading-[1.1] will-change-transform ${centered ? "text-[clamp(2rem,6vw,108px)]" : "text-[clamp(1.75rem,4.6vw,76px)]"}`}
             style={{
               color: article.titleColor,
               transform: titleInitialTransform(from),

@@ -1,27 +1,37 @@
-import { type MotionValue, motion, useTransform } from "motion/react";
+import { Link } from "react-router";
+import { PRIMER_DEFAULTS } from "../article/types";
 import {
   DESIGN_H,
   DESIGN_W,
   useViewportScale,
 } from "../lib/use-viewport-scale";
-import articleTitle from "../public/editors-message/article-title.svg";
 import background from "../public/editors-message/background.svg";
-import hamburgerMenu from "../public/editors-message/hamburger-menu.svg";
-import readMore from "../public/editors-message/read-more.svg";
 
-export function EditorsMessage({
-  progress,
-}: {
-  progress: MotionValue<number>;
-}) {
+/** Right-pointing arrow for the "Read More" button. */
+function ArrowRight({ className }: { className?: string }) {
+  return (
+    <svg
+      width="16"
+      height="13"
+      viewBox="0 0 17 13.4142"
+      fill="none"
+      aria-hidden="true"
+      className={`block shrink-0 ${className ?? ""}`}
+    >
+      <path
+        d="M0 6.70711H16M10 0.707107L16 6.70711L10 12.7071"
+        stroke="white"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function EditorsMessage() {
   const scale = useViewportScale();
-  // Article title and Read More glide in/out continuously with scroll,
-  // instead of firing once.
-  const articleOpacity = useTransform(progress, [0, 1], [0, 1]);
-  const articleY = useTransform(progress, [0, 1], [-200, 0]);
-  const readMoreOpacity = useTransform(progress, [0, 1], [0, 1]);
-  const readMoreX = useTransform(progress, [0, 1], [-500, 0]);
-
+  const buttonColor = PRIMER_DEFAULTS.buttonColor;
+  const buttonHover = PRIMER_DEFAULTS.buttonHoverColor;
   return (
     <section className="relative z-20 size-full overflow-hidden">
       <div
@@ -30,9 +40,10 @@ export function EditorsMessage({
           width: DESIGN_W,
           height: DESIGN_H,
           transform: `translate(-50%, -50%) scale(${scale})`,
+          background: "black",
         }}
       >
-        <div className="relative size-full">
+        <div className="relative size-full pb-25 pt-60 px-45">
           <img
             alt=""
             aria-hidden="true"
@@ -52,46 +63,33 @@ export function EditorsMessage({
             src={background}
           />
 
-          <motion.img
-            alt="Hamburger menu"
-            className="absolute"
+          <h1 className="font-display text-white text-4xl uppercase relative z-50 mb-3">
+            A message from the editors
+          </h1>
+          <h1 className="font-display text-white text-9xl uppercase relative z-50 mb-15">
+            Fight and <br />
+            rise together
+          </h1>
+          <p className="font-archivo text-white text-2xl relative z-50 w-[40%] mb-25">
+            <strong>NOW MORE</strong> than ever, sports has become an arena not
+            just for play, but for real human stories. After the passing of
+            Chukwuemeka Divine Adili and Rene Clert Baterbonia, the sports
+            community must look beyond the court...
+          </p>
+          <Link
+            to={"/editors-message"}
+            aria-label={`Read more: Editor's Message}`}
+            className="group flex h-[52px] w-[224px] max-w-full items-center justify-center gap-[9px] rounded-[7px] bg-[var(--btn)] text-white transition-colors hover:bg-[var(--btn-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#194681] focus-visible:ring-offset-2 relative z-50"
             style={{
-              left: 92,
-              top: 58,
-              width: 34,
-              height: 22,
-              opacity: articleOpacity,
+              "--btn": buttonColor,
+              "--btn-hover": buttonHover,
             }}
-            src={hamburgerMenu}
-          />
-
-          <motion.img
-            alt="A message from the editors — title of article, lorem ipsum"
-            className="absolute"
-            style={{
-              left: 162,
-              top: 151,
-              width: 1072,
-              height: 504,
-              opacity: articleOpacity,
-              y: articleY,
-            }}
-            src={articleTitle}
-          />
-
-          <motion.img
-            alt="Read More"
-            className="absolute"
-            style={{
-              left: 162,
-              top: 800,
-              width: 257,
-              height: 72,
-              opacity: readMoreOpacity,
-              x: readMoreX,
-            }}
-            src={readMore}
-          />
+          >
+            <span className="font-bold text-[20px] lg:text-[24px]">
+              "Read More"
+            </span>
+            <ArrowRight className="transition-transform duration-200 group-hover:translate-x-1.5 group-focus-visible:translate-x-1.5" />
+          </Link>
         </div>
       </div>
     </section>
