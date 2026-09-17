@@ -129,7 +129,7 @@ function SlidingPhoto({
   );
 }
 
-export function FrontPage({ progress }: { progress: MotionValue<number> }) {
+export function FrontPage() {
   const scale = useViewportScale();
   const [slideIndex, setSlideIndex] = useState(0);
 
@@ -151,9 +151,6 @@ export function FrontPage({ progress }: { progress: MotionValue<number> }) {
 
   const slide = SLIDES[slideIndex];
 
-  const scrollY = useTransform(progress, [0, 1], [0, -200]);
-  const scrollOpacity = useTransform(progress, [0, 1], [1, 0]);
-
   return (
     <section className="relative z-20 size-full overflow-hidden">
       <div
@@ -166,16 +163,8 @@ export function FrontPage({ progress }: { progress: MotionValue<number> }) {
       >
         <div className="relative size-full overflow-hidden">
           {/* Entrance: drops down from above once on load. */}
-          <motion.div
-            className="absolute inset-0"
-            initial={{ opacity: 0, y: -200 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: "easeOut" }}
-          >
-            <motion.div
-              className="absolute inset-0"
-              style={{ opacity: scrollOpacity, y: scrollY }}
-            >
+          <motion.div className="absolute inset-0">
+            <motion.div className="absolute inset-0">
               <img
                 alt=""
                 aria-hidden="true"
