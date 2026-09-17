@@ -1,0 +1,97 @@
+import { Link } from "react-router";
+import { PRIMER_DEFAULTS } from "../article/types";
+import {
+  DESIGN_H,
+  DESIGN_W,
+  useViewportScale,
+} from "../lib/use-viewport-scale";
+import background from "../public/editors-message/background.svg";
+
+/** Right-pointing arrow for the "Read More" button. */
+function ArrowRight({ className }: { className?: string }) {
+  return (
+    <svg
+      width="16"
+      height="13"
+      viewBox="0 0 17 13.4142"
+      fill="none"
+      aria-hidden="true"
+      className={`block shrink-0 ${className ?? ""}`}
+    >
+      <path
+        d="M0 6.70711H16M10 0.707107L16 6.70711L10 12.7071"
+        stroke="white"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function EditorsMessage() {
+  const scale = useViewportScale();
+  const buttonColor = PRIMER_DEFAULTS.buttonColor;
+  const buttonHover = PRIMER_DEFAULTS.buttonHoverColor;
+  return (
+    <section className="relative z-20 size-full overflow-hidden">
+      <div
+        className="absolute left-1/2 top-1/2"
+        style={{
+          width: DESIGN_W,
+          height: DESIGN_H,
+          transform: `translate(-50%, -50%) scale(${scale})`,
+          background: "black",
+        }}
+      >
+        <div className="relative size-full pb-25 pt-60 px-45">
+          <img
+            alt=""
+            aria-hidden="true"
+            className="absolute"
+            style={{
+              left: 0,
+              top: 0,
+              width: DESIGN_W,
+              height: DESIGN_H,
+              // Fades the top edge to transparent so the streaks don't start
+              // in a hard-cut line where the front page ends — they dissolve
+              // out of the shared backdrop instead of appearing abruptly.
+              maskImage: "linear-gradient(to bottom, transparent 0%, black 6%)",
+              WebkitMaskImage:
+                "linear-gradient(to bottom, transparent 0%, black 6%)",
+            }}
+            src={background}
+          />
+
+          <h1 className="font-display text-white text-4xl uppercase relative z-50 mb-3">
+            A message from the editors
+          </h1>
+          <h1 className="font-display text-white text-9xl uppercase relative z-50 mb-15">
+            Fight and <br />
+            rise together
+          </h1>
+          <p className="font-archivo text-white text-2xl relative z-50 w-[40%] mb-25">
+            <strong>NOW MORE</strong> than ever, sports has become an arena not
+            just for play, but for real human stories. After the passing of
+            Chukwuemeka Divine Adili and Rene Clert Baterbonia, the sports
+            community must look beyond the court...
+          </p>
+          <Link
+            to={"/editors-message"}
+            aria-label={`Read more: Editor's Message}`}
+            className="group flex h-[52px] w-[224px] max-w-full items-center justify-center gap-[9px] rounded-[7px] bg-[var(--btn)] text-white transition-colors hover:bg-[var(--btn-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#194681] focus-visible:ring-offset-2 relative z-50"
+            style={{
+              "--btn": buttonColor,
+              "--btn-hover": buttonHover,
+            }}
+          >
+            <span className="font-bold text-[20px] lg:text-[24px]">
+              "Read More"
+            </span>
+            <ArrowRight className="transition-transform duration-200 group-hover:translate-x-1.5 group-focus-visible:translate-x-1.5" />
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -1,3 +1,5 @@
+import { EditorsMessage } from "~/editors-message/editors-message";
+import { FrontPage } from "~/front-page/front-page";
 import { badminton } from "../article/data/badminton";
 import { basketball } from "../article/data/basketball";
 import { BeachVolleyball } from "../article/data/beach-volleyball";
@@ -18,18 +20,24 @@ export function meta() {
 
 export default function Home() {
   return (
-    <>
-      {/* TEMP: blank spacer so the primer starts below the fold. */}
-      <section aria-hidden="true" className="h-screen bg-white" />
-      <SportPrimer primer={basketball} />
-      <SportPrimer primer={football} />
-      <SportPrimer primer={badminton} />
-      <SportPrimer primer={TableTennis} />
-      <SportPrimer primer={BeachVolleyball} />
-      <SportPrimer primer={Swimming} />
-      <SportPrimer primer={TrackAndField} />
-      <SportPrimer primer={chess} />
-      <SportPrimer primer={cheerdance} />
-    </>
+    <main>
+      <div className="h-dvh w-full snap-start">
+        <FrontPage />
+      </div>
+      <div className="h-dvh w-full snap-start">
+        <EditorsMessage />
+      </div>
+      <section>
+        <SportPrimer primer={basketball} />
+        <SportPrimer primer={football} />
+        <SportPrimer primer={badminton} />
+        <SportPrimer primer={TableTennis} />
+        <SportPrimer primer={BeachVolleyball} />
+        <SportPrimer primer={Swimming} />
+        <SportPrimer primer={TrackAndField} />
+        <SportPrimer primer={chess} />
+        <SportPrimer primer={cheerdance} />
+      </section>
+    </main>
   );
 }
