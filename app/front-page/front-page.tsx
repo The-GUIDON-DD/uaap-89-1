@@ -60,6 +60,14 @@ const ALL_IMAGES = [
 ];
 
 const SLIDE_INTERVAL_MS = 4000;
+
+// On phones the 16:9 canvas is cropped to a narrow slice around its middle
+// (x = 960), which cuts off the athletes standing left of center. Below this
+// width we re-center the crop on the athletes instead.
+const MOBILE_MAX_W = 768;
+const MOBILE_FOCUS_X = 740;
+// The cheer photo sits further left in the canvas than the paired shots.
+const MOBILE_FOCUS_X_CHEER = 520;
 const TRANSITION = { duration: 0.65, ease: [0.4, 0, 0.2, 1] as const };
 
 // Fades each photo out over this many design-space pixels right at the
@@ -118,6 +126,26 @@ function SlidingPhoto({
 export function FrontPage() {
   const scale = useViewportScale();
   const [slideIndex, setSlideIndex] = useState(0);
+  const [viewportW, setViewportW] = useState(DESIGN_W);
+
+  useEffect(() => {
+    const update = () => setViewportW(window.innerWidth);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  // Shift the canvas right so MOBILE_FOCUS_X lands mid-screen, clamped so the
+  // canvas's left edge never comes into view.
+  const slide = SLIDES[slideIndex];
+  const focusX = slide.cheer ? MOBILE_FOCUS_X_CHEER : MOBILE_FOCUS_X;
+  const shiftX =
+    viewportW < MOBILE_MAX_W
+      ? Math.min(
+          (DESIGN_W / 2 - focusX) * scale,
+          (DESIGN_W / 2) * scale - viewportW / 2,
+        )
+      : 0;
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -135,8 +163,6 @@ export function FrontPage() {
     }
   }, []);
 
-  const slide = SLIDES[slideIndex];
-
   return (
     <section className="relative z-20 size-full overflow-hidden">
       <div
@@ -144,7 +170,8 @@ export function FrontPage() {
         style={{
           width: DESIGN_W,
           height: DESIGN_H,
-          transform: `translate(-50%, -50%) scale(${scale})`,
+          transform: `translate(calc(-50% + ${shiftX}px), -50%) scale(${scale})`,
+          transition: `transform ${TRANSITION.duration}s cubic-bezier(${TRANSITION.ease.join(",")})`,
         }}
       >
         <div className="relative size-full overflow-hidden">
@@ -260,9 +287,9 @@ export function FrontPage() {
 
       {/* Phones: the 16:9 canvas is cropped to its middle, which cuts off the
           right-hand logo and title, so show them as a regular overlay. */}
-      <div className="pointer-events-none absolute inset-0 flex flex-col items-end justify-between px-5 pb-10 pt-6 md:hidden">
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-end justify-between px-5 pt-6 md:hidden">
         <img alt="The GUIDON" className="w-[42vw] max-w-[200px]" src={logo} />
-        <div className="-mx-5 w-[calc(100%+2.5rem)] bg-gradient-to-t from-white via-white/90 to-transparent px-5 pt-16">
+        <div className="-mx-5 w-[calc(100%+2.5rem)] bg-gradient-to-t from-white via-white/90 to-transparent px-5 pb-10 pt-16">
           <img
             alt="UAAP Season 89 First Semester Primer"
             className="ml-auto w-[78vw] max-w-[360px]"
