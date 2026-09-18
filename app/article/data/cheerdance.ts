@@ -2,7 +2,7 @@ import artLeft from "../assets/cheerdance/art-left.svg";
 import artR1 from "../assets/cheerdance/art-r1.svg";
 import artR2 from "../assets/cheerdance/art-r2.svg";
 import artR3 from "../assets/cheerdance/art-r3.svg";
-import players from "../assets/cheerdance/players.png";
+import players from "../assets/cheerdance/players.webp";
 import { defineSportPrimer } from "../types";
 
 export const cheerdance = defineSportPrimer({
