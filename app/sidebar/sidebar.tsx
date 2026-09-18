@@ -160,7 +160,7 @@ export function Sidebar() {
         }`}
       >
         {/* Logo block */}
-        <div className="flex flex-col gap-[12px] px-[40px] pt-[64px]">
+        <div className="flex flex-col items-center gap-[12px] mt-[60px] mb-[32px]">
           <img
             src={guidonLogo}
             alt="The Guidon"
