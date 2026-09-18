@@ -1,9 +1,4 @@
-import {
-  AnimatePresence,
-  type MotionValue,
-  motion,
-  useTransform,
-} from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import {
   DESIGN_H,
@@ -18,24 +13,18 @@ import band1 from "../public/front-page/band-1.svg";
 import band2 from "../public/front-page/band-2.svg";
 import bgWhiteA from "../public/front-page/bg-white-a.svg";
 import bgWhiteB from "../public/front-page/bg-white-b.svg";
+import logo from "../public/front-page/LOGO.svg";
 import cheerCombined from "../public/front-page/sports/cheer-combined.webp";
 import mBadminton from "../public/front-page/sports/m-badminton.webp";
-import mBasketball from "../public/front-page/sports/m-basketball.webp";
-import mBeachVolleyball from "../public/front-page/sports/m-beach-volleyball.webp";
-import mChess from "../public/front-page/sports/m-chess.webp";
 import mFootball from "../public/front-page/sports/m-football.webp";
-import mSwimming from "../public/front-page/sports/m-swimming.webp";
 import mTableTennis from "../public/front-page/sports/m-table-tennis.webp";
 import mTrackField from "../public/front-page/sports/m-track-field.webp";
 import wBadminton from "../public/front-page/sports/w-badminton.webp";
-import wBasketball from "../public/front-page/sports/w-basketball.webp";
 import wBeachVolleyball from "../public/front-page/sports/w-beach-volleyball.webp";
-import wChess from "../public/front-page/sports/w-chess.webp";
 import wFootball from "../public/front-page/sports/w-football.webp";
-import wSwimming from "../public/front-page/sports/w-swimming.webp";
 import wTableTennis from "../public/front-page/sports/w-table-tennis.webp";
 import wTrackField from "../public/front-page/sports/w-track-field.webp";
-import textLockup from "../public/front-page/text-lockup.svg";
+import title from "../public/front-page/title.svg";
 
 const SPORTS = [
   { name: "Football", men: mFootball, women: wFootball },
@@ -231,15 +220,24 @@ export function FrontPage() {
                 src={bgWhiteB}
               />
               <img
-                alt="UAAP Season 89 First Semester Primer — The GUIDON"
+                alt="The GUIDON"
                 className="absolute"
                 style={{
-                  left: 1216,
-                  top: 68,
-                  width: 621,
-                  height: 944,
+                  right: "2%",
+                  top: "15vh",
+                  width: "20vw",
                 }}
-                src={textLockup}
+                src={logo}
+              />
+              <img
+                alt="UAAP Season 89 First Semester Primer"
+                className="absolute"
+                style={{
+                  right: "2%",
+                  bottom: "15vh",
+                  width: "30vw",
+                }}
+                src={title}
               />
               <img
                 alt=""

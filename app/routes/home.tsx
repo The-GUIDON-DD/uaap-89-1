@@ -1,5 +1,6 @@
 import { EditorsMessage } from "~/editors-message/editors-message";
 import { FrontPage } from "~/front-page/front-page";
+import { Sidebar } from "~/sidebar/sidebar";
 import { badminton } from "../article/data/badminton";
 import { basketball } from "../article/data/basketball";
 import { BeachVolleyball } from "../article/data/beach-volleyball";
@@ -21,6 +22,7 @@ export function meta() {
 export default function Home() {
   return (
     <main>
+      <Sidebar />
       <div className="h-dvh w-full snap-start">
         <FrontPage />
       </div>
