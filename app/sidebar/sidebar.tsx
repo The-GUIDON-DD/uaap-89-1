@@ -8,9 +8,12 @@ type SportOption = {
   name: string;
   /** Present (even if empty) for a collapsible option; omit for a leaf option. */
   subOptions?: string[];
+  /** Custom destination for a leaf option; defaults to `/sports/<slug>`. */
+  href?: string;
 };
 
 const options: SportOption[] = [
+  { name: "Editor’s Message", href: "/editors-message" },
   {
     name: "Basketball",
     subOptions: ["Men’s Basketball", "Women’s Basketball"],
@@ -160,7 +163,15 @@ export function Sidebar() {
         }`}
       >
         {/* Logo block */}
-        <div className="flex flex-col items-center gap-[12px] mt-[60px] mb-[32px]">
+        <Link
+          to="/"
+          aria-label="Back to homepage"
+          onClick={() => {
+            setOpen(false);
+            window.scrollTo({ top: 0 });
+          }}
+          className="flex flex-col items-center gap-[12px] mt-[60px] mb-[32px] transition-opacity hover:opacity-80"
+        >
           <img
             src={guidonLogo}
             alt="The Guidon"
@@ -172,7 +183,7 @@ export function Sidebar() {
             className="block h-[95px] w-[184px]"
           />
           <p className="text-[20px] leading-[0.9]">First Semester Primer</p>
-        </div>
+        </Link>
 
         {/* Options list */}
         <nav className="mt-[24px] flex flex-col">
@@ -212,7 +223,7 @@ export function Sidebar() {
                   </button>
                 ) : (
                   <Link
-                    to={`/sports/${slugify(option.name)}`}
+                    to={option.href ?? `/sports/${slugify(option.name)}`}
                     className={headerClass}
                   >
                     <span className="whitespace-nowrap text-[19px] font-bold">

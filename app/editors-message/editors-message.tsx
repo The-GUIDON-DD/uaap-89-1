@@ -38,8 +38,55 @@ export function EditorsMessage() {
       className="relative z-20 size-full overflow-hidden"
       id="editors-message"
     >
+      {/* Phones: a stacked layout instead of the cropped 16:9 canvas. */}
+      <div className="relative flex size-full flex-col justify-end overflow-hidden bg-black px-6 pb-12 pt-20 md:hidden">
+        <img
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 size-full object-cover opacity-70"
+          src={background}
+        />
+        <img
+          alt="Editor's Message"
+          src="/editors.webp"
+          className="absolute left-1/2 top-[6%] h-[60%] max-w-none -translate-x-1/2"
+          style={{
+            maskImage: "linear-gradient(to bottom, black 70%, transparent)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, black 70%, transparent)",
+          }}
+        />
+        <div className="relative z-10 flex flex-col gap-4 bg-gradient-to-t from-black via-black/80 to-transparent pt-16">
+          <p className="font-display text-lg uppercase text-white">
+            A message from the editors
+          </p>
+          <h2 className="font-display text-5xl uppercase leading-[1.05] text-white">
+            Fight and <br />
+            rise together
+          </h2>
+          <p className="font-archivo text-base text-white">
+            <strong>NOW MORE</strong> than ever, sports has become an arena not
+            just for play, but for real human stories...
+          </p>
+          <Link
+            to={"/editors-message"}
+            aria-label="Read more: Editor's Message"
+            className="group mt-2 flex h-[48px] w-[200px] items-center justify-center gap-[9px] rounded-[7px] bg-[var(--btn)] text-white transition-colors hover:bg-[var(--btn-hover)]"
+            style={
+              {
+                "--btn": buttonColor,
+                "--btn-hover": buttonHover,
+              } as React.CSSProperties
+            }
+          >
+            <span className="text-[20px] font-bold">Read More</span>
+            <ArrowRight className="transition-transform duration-200 group-hover:translate-x-1.5" />
+          </Link>
+        </div>
+      </div>
+
       <div
-        className="absolute left-1/2 top-1/2"
+        className="absolute left-1/2 top-1/2 hidden md:block"
         style={{
           width: DESIGN_W,
           height: DESIGN_H,
