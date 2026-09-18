@@ -13,6 +13,7 @@ type SportOption = {
 };
 
 const options: SportOption[] = [
+  { name: "Editor’s Message", href: "/editors-message" },
   {
     name: "Basketball",
     subOptions: ["Men’s Basketball", "Women’s Basketball"],
@@ -34,7 +35,6 @@ const options: SportOption[] = [
   },
   { name: "Chess", subOptions: ["Men’s Chess", "Women’s Chess"] },
   { name: "Cheerdance" },
-  { name: "Editor’s Message", href: "/editors-message" },
 ];
 
 // Native ease-in-out, matching the reference site's transitions.

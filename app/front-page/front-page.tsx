@@ -221,7 +221,7 @@ export function FrontPage() {
               />
               <img
                 alt="The GUIDON"
-                className="absolute"
+                className="absolute hidden md:block"
                 style={{
                   right: "5%",
                   top: "15vh",
@@ -231,7 +231,7 @@ export function FrontPage() {
               />
               <img
                 alt="UAAP Season 89 First Semester Primer"
-                className="absolute"
+                className="absolute hidden md:block"
                 style={{
                   right: "5%",
                   bottom: "15vh",
@@ -255,6 +255,19 @@ export function FrontPage() {
               />
             </motion.div>
           </motion.div>
+        </div>
+      </div>
+
+      {/* Phones: the 16:9 canvas is cropped to its middle, which cuts off the
+          right-hand logo and title, so show them as a regular overlay. */}
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-end justify-between px-5 pb-10 pt-6 md:hidden">
+        <img alt="The GUIDON" className="w-[42vw] max-w-[200px]" src={logo} />
+        <div className="-mx-5 w-[calc(100%+2.5rem)] bg-gradient-to-t from-white via-white/90 to-transparent px-5 pt-16">
+          <img
+            alt="UAAP Season 89 First Semester Primer"
+            className="ml-auto w-[78vw] max-w-[360px]"
+            src={title}
+          />
         </div>
       </div>
     </section>

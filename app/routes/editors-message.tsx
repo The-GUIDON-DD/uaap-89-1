@@ -34,15 +34,15 @@ export default function EditorsMessage() {
         <section className="bg-[url('/article-bg.svg')] bg-cover bg-black w-full h-85" />
         <Link
           to="/"
-          className="mt-4 rounded-lg px-5 py-2 font-bold transition-colors bg-[#1c4480] text-white font-archivo absolute right-[5vw] top-5 z-10 group"
+          className="mt-4 rounded-lg px-5 py-2 font-bold transition-colors bg-[#1c4480] text-white font-archivo absolute right-4 sm:right-[5vw] top-3 sm:top-5 z-10 group"
         >
           <ArrowRight className="transition-transform duration-200 group-hover:-translate-x-1.5 group-focus-visible:-translate-x-1.5 -scale-x-100 inline-block mr-2" />
           Back
         </Link>
       </section>
-      <section className="size-full col-start-1 row-start-1 relative pt-40 pb-16 px-[30%]">
-        <section className="h-52 flex flex-col gap-2 mb-4">
-          <h1 className="font-display text-white text-6xl uppercase whitespace-pre">
+      <section className="size-full col-start-1 row-start-1 relative pt-24 pb-16 px-5 sm:pt-40 sm:px-[10%] lg:px-[20%] xl:px-[30%]">
+        <section className="min-h-52 flex flex-col gap-2 mb-12 sm:mb-4">
+          <h1 className="font-display text-white text-4xl sm:text-6xl uppercase whitespace-pre-line">
             Fight and
             <br />
             Rise Together
