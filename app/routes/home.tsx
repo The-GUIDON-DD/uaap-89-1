@@ -1,3 +1,4 @@
+import { Credits } from "~/credits/credits";
 import { EditorsMessage } from "~/editors-message/editors-message";
 import { FrontPage } from "~/front-page/front-page";
 import { Sidebar } from "~/sidebar/sidebar";
@@ -40,6 +41,7 @@ export default function Home() {
         <SportPrimer primer={chess} />
         <SportPrimer primer={cheerdance} />
       </section>
+      <Credits />
     </main>
   );
 }

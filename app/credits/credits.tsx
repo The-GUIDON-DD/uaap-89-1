@@ -109,7 +109,7 @@ export function Credits({
         <div className="mt-[16px] h-[2px] w-full bg-white" />
 
         {/* Credits — grows to fill the remaining height */}
-        <div className="mt-[16px] flex flex-1 flex-col gap-[24px] text-[13px] lg:flex-row lg:gap-[40px] lg:text-[14px]">
+        <div className="mt-8 flex flex-1 flex-col gap-8 text-[13px] lg:flex-row lg:gap-[40px] lg:text-[14px]">
           <dl className="flex shrink-0 flex-col gap-[14px] lg:w-[240px]">
             {editors.map((editor, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: order-independent credit list
@@ -124,7 +124,7 @@ export function Credits({
             ))}
           </dl>
 
-          <dl className="flex flex-1 flex-col gap-[10px]">
+          <dl className="flex flex-1 flex-col gap-5">
             {sections.map((section, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: order-independent credit list
               <div key={`${section.position}-${i}`}>

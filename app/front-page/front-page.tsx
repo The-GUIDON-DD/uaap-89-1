@@ -223,7 +223,7 @@ export function FrontPage() {
                 alt="The GUIDON"
                 className="absolute"
                 style={{
-                  right: "2%",
+                  right: "5%",
                   top: "15vh",
                   width: "20vw",
                 }}
@@ -233,7 +233,7 @@ export function FrontPage() {
                 alt="UAAP Season 89 First Semester Primer"
                 className="absolute"
                 style={{
-                  right: "2%",
+                  right: "5%",
                   bottom: "15vh",
                   width: "30vw",
                 }}
