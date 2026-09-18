@@ -292,7 +292,15 @@ export function FrontPage() {
       {/* Phones: the 16:9 canvas is cropped to its middle, which cuts off the
           right-hand logo and title, so show them as a regular overlay. */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 md:hidden">
-        <div className="flex flex-col items-end gap-4 bg-gradient-to-t from-white from-[85%] via-white/80 via-[93%] to-transparent px-5 pb-4 pt-12">
+        <div
+          className="flex flex-col items-end gap-4 px-5 pb-4 pt-32"
+          style={{
+            // Solid white behind the logo and title (so the art's diagonal
+            // edges don't show through), then an eased fade into the photo.
+            background:
+              "linear-gradient(to top, #fff 0%, #fff 64%, rgba(255,255,255,0.9) 71%, rgba(255,255,255,0.7) 79%, rgba(255,255,255,0.4) 88%, rgba(255,255,255,0.12) 95%, rgba(255,255,255,0) 100%)",
+          }}
+        >
           <img alt="The GUIDON" className="w-[42vw] max-w-[200px]" src={logo} />
           <img
             alt="UAAP Season 89 First Semester Primer"

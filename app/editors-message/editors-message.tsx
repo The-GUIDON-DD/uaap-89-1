@@ -60,7 +60,11 @@ export function EditorsMessage() {
             running all the way to the bottom edge with the streaks. */}
         <div
           aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-[65%] bg-gradient-to-t from-black from-40% via-black/85 via-70% to-transparent"
+          className="absolute inset-x-0 bottom-0 h-[75%]"
+          style={{
+            background:
+              "linear-gradient(to top, #000 0%, #000 38%, rgba(0,0,0,0.9) 48%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.4) 75%, rgba(0,0,0,0.12) 90%, rgba(0,0,0,0) 100%)",
+          }}
         />
         <div className="relative z-10 flex flex-col gap-4">
           <p className="font-display text-lg uppercase text-white">
