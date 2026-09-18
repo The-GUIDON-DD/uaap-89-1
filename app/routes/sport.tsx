@@ -41,7 +41,7 @@ function ArticleContent({ article }: { article: string }) {
   const paragraphs = article.split("\n\n");
   const firstTwoWords = paragraphs[0].split(" ").slice(0, 2).join(" ");
   return (
-    <article className="w-full flex flex-col gap-8 my-8">
+    <article className="w-full flex flex-col gap-8 my-8 text-black">
       {/* render first paragraph */}
       <p>
         <span className="font-bold uppercase text-[#1c4480]">
@@ -50,9 +50,7 @@ function ArticleContent({ article }: { article: string }) {
         {paragraphs[0].split(" ").slice(2).join(" ")}
       </p>
       {paragraphs.slice(1).map((para) => (
-        <p className="text-black" key={para}>
-          {para}
-        </p>
+        <p key={para}>{para}</p>
       ))}
     </article>
   );
@@ -118,19 +116,19 @@ export default function Sport({ params }: Route.ComponentProps) {
   const sportData = writeups[sportKey as keyof typeof writeups];
 
   return (
-    <main className="w-full min-h-screen grid grid-cols-1 grid-rows-1">
+    <main className="w-full min-h-screen grid grid-cols-1 grid-rows-1 bg-white">
       <Sidebar />
       <section className="size-full col-start-1 row-start-1 bg-white">
         <section className="bg-[url('/article-bg.svg')] bg-cover bg-black w-full h-85" />
         <Link
           to="/"
-          className="mt-4 rounded-lg px-5 py-2 font-bold transition-colors bg-[#1c4480] text-white font-archivo absolute right-[5vw] top-5 group"
+          className="mt-4 rounded-lg px-5 py-2 font-bold transition-colors bg-[#1c4480] text-white font-archivo absolute right-[5vw] top-5 z-10 group"
         >
           <ArrowRight className="transition-transform duration-200 group-hover:-translate-x-1.5 group-focus-visible:-translate-x-1.5 -scale-x-100 inline-block mr-2" />
           Back
         </Link>
       </section>
-      <section className="size-full col-start-1 row-start-1 relative top-20 px-[30%]">
+      <section className="size-full col-start-1 row-start-1 relative pt-20 px-[30%]">
         <section className="h-52 flex flex-col gap-2">
           <h2 className="font-display text-[#d29300] text-3xl">
             {sportData.name}

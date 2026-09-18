@@ -161,11 +161,13 @@ export function Sidebar() {
       >
         {/* Logo block */}
         <div className="flex flex-col items-center gap-[12px] mt-[60px] mb-[32px]">
-          <img
-            src={guidonLogo}
-            alt="The Guidon"
-            className="block h-[24px] w-[157px]"
-          />
+          <Link to="/" aria-label="Back to homepage" className="block">
+            <img
+              src={guidonLogo}
+              alt="The Guidon"
+              className="block h-[24px] w-[157px]"
+            />
+          </Link>
           <img
             src={uaapTitle}
             alt="UAAP Season 89"
