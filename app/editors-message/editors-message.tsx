@@ -43,7 +43,7 @@ export function EditorsMessage() {
         <img
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 size-full object-cover opacity-70"
+          className="absolute inset-0 size-full object-cover object-[6%_-5%] opacity-70"
           src={background}
         />
         <img
