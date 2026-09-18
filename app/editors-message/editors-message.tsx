@@ -56,7 +56,13 @@ export function EditorsMessage() {
               "linear-gradient(to bottom, black 70%, transparent)",
           }}
         />
-        <div className="relative z-10 flex flex-col gap-4 bg-gradient-to-t from-black via-black/80 to-transparent pt-16">
+        {/* Dark gradient over the lower part so the text reads over the art,
+            running all the way to the bottom edge with the streaks. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-[65%] bg-gradient-to-t from-black/90 via-black/70 to-transparent"
+        />
+        <div className="relative z-10 flex flex-col gap-4">
           <p className="font-display text-lg uppercase text-white">
             A message from the editors
           </p>
