@@ -8,6 +8,8 @@ type SportOption = {
   name: string;
   /** Present (even if empty) for a collapsible option; omit for a leaf option. */
   subOptions?: string[];
+  /** Custom destination for a leaf option; defaults to `/sports/<slug>`. */
+  href?: string;
 };
 
 const options: SportOption[] = [
@@ -32,6 +34,7 @@ const options: SportOption[] = [
   },
   { name: "Chess", subOptions: ["Men’s Chess", "Women’s Chess"] },
   { name: "Cheerdance" },
+  { name: "Editor’s Message", href: "/editors-message" },
 ];
 
 // Native ease-in-out, matching the reference site's transitions.
@@ -220,7 +223,7 @@ export function Sidebar() {
                   </button>
                 ) : (
                   <Link
-                    to={`/sports/${slugify(option.name)}`}
+                    to={option.href ?? `/sports/${slugify(option.name)}`}
                     className={headerClass}
                   >
                     <span className="whitespace-nowrap text-[19px] font-bold">
