@@ -18,34 +18,31 @@ import band1 from "../public/front-page/band-1.svg";
 import band2 from "../public/front-page/band-2.svg";
 import bgWhiteA from "../public/front-page/bg-white-a.svg";
 import bgWhiteB from "../public/front-page/bg-white-b.svg";
-import cheerCombined from "../public/front-page/sports/cheer-combined.png";
-import mBadminton from "../public/front-page/sports/m-badminton.png";
-import mBasketball from "../public/front-page/sports/m-basketball.png";
-import mBeachVolleyball from "../public/front-page/sports/m-beach-volleyball.png";
-import mChess from "../public/front-page/sports/m-chess.png";
-import mFootball from "../public/front-page/sports/m-football.png";
-import mSwimming from "../public/front-page/sports/m-swimming.png";
-import mTableTennis from "../public/front-page/sports/m-table-tennis.png";
-import mTrackField from "../public/front-page/sports/m-track-field.png";
-import wBadminton from "../public/front-page/sports/w-badminton.png";
-import wBasketball from "../public/front-page/sports/w-basketball.png";
-import wBeachVolleyball from "../public/front-page/sports/w-beach-volleyball.png";
-import wChess from "../public/front-page/sports/w-chess.png";
-import wFootball from "../public/front-page/sports/w-football.png";
-import wSwimming from "../public/front-page/sports/w-swimming.png";
-import wTableTennis from "../public/front-page/sports/w-table-tennis.png";
-import wTrackField from "../public/front-page/sports/w-track-field.png";
+import cheerCombined from "../public/front-page/sports/cheer-combined.webp";
+import mBadminton from "../public/front-page/sports/m-badminton.webp";
+import mBasketball from "../public/front-page/sports/m-basketball.webp";
+import mBeachVolleyball from "../public/front-page/sports/m-beach-volleyball.webp";
+import mChess from "../public/front-page/sports/m-chess.webp";
+import mFootball from "../public/front-page/sports/m-football.webp";
+import mSwimming from "../public/front-page/sports/m-swimming.webp";
+import mTableTennis from "../public/front-page/sports/m-table-tennis.webp";
+import mTrackField from "../public/front-page/sports/m-track-field.webp";
+import wBadminton from "../public/front-page/sports/w-badminton.webp";
+import wBasketball from "../public/front-page/sports/w-basketball.webp";
+import wBeachVolleyball from "../public/front-page/sports/w-beach-volleyball.webp";
+import wChess from "../public/front-page/sports/w-chess.webp";
+import wFootball from "../public/front-page/sports/w-football.webp";
+import wSwimming from "../public/front-page/sports/w-swimming.webp";
+import wTableTennis from "../public/front-page/sports/w-table-tennis.webp";
+import wTrackField from "../public/front-page/sports/w-track-field.webp";
 import textLockup from "../public/front-page/text-lockup.svg";
 
 const SPORTS = [
   { name: "Football", men: mFootball, women: wFootball },
-  { name: "Basketball", men: mBasketball, women: wBasketball },
   { name: "Badminton", men: mBadminton, women: wBadminton },
-  { name: "Chess", men: mChess, women: wChess },
   { name: "Table Tennis", men: mTableTennis, women: wTableTennis },
-  { name: "Beach Volleyball", men: mBeachVolleyball, women: wBeachVolleyball },
-  { name: "Track & Field", men: mTrackField, women: wTrackField },
-  { name: "Swimming", men: mSwimming, women: wSwimming },
+  { name: "Beach Volleyball", men: null, women: wBeachVolleyball },
+  { name: "Track & Field", men: wTrackField, women: mTrackField },
 ] as const;
 
 type Slide = {
@@ -185,7 +182,7 @@ export function FrontPage() {
                 src={slide.men}
                 slideKey={slide.key}
                 alt={`Ateneo Blue Eagles ${slide.key} athletes`}
-                box={{ left: -87, top: 0, width: 847, height: 1080 }}
+                box={{ left: -87, top: 80, width: 800, height: 1080 }}
               />
 
               <img
@@ -223,7 +220,7 @@ export function FrontPage() {
                 slideKey={slide.key}
                 alt="Ateneo Blue Babble Battalion cheerleaders"
                 anchor="center"
-                box={{ left: -20, top: 0, width: 1140, height: 1080 }}
+                box={{ left: -20, top: 30, width: 1140, height: 1080 }}
               />
 
               <img

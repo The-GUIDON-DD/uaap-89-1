@@ -1,13 +1,13 @@
+import mensPlayers from "../assets/badminton/mens-players.webp";
+import womensPlayers from "../assets/badminton/womens-players.webp";
 import mensArtLeft from "../assets/basketball/mens-art-left.svg";
 import mensArtR1 from "../assets/basketball/mens-art-r1.svg";
 import mensArtR2 from "../assets/basketball/mens-art-r2.svg";
 import mensArtR3 from "../assets/basketball/mens-art-r3.svg";
-import mensPlayers from "../assets/basketball/mens-players.png";
 import womensArtLeft from "../assets/basketball/womens-art-left.svg";
 import womensArtR1 from "../assets/basketball/womens-art-r1.svg";
 import womensArtR2 from "../assets/basketball/womens-art-r2.svg";
 import womensArtR3 from "../assets/basketball/womens-art-r3.svg";
-import womensPlayers from "../assets/basketball/womens-players.png";
 import { defineSportPrimer } from "../types";
 
 /**
