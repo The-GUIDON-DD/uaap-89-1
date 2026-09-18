@@ -52,7 +52,7 @@ export function EditorsMessage() {
           className="absolute left-1/2 top-[6%] h-[90%] md:h-[56%] max-w-none -translate-x-1/2"
           style={{
             maskImage:
-              "linear-gradient(to bottom, black 88%, transparent 100%)",
+              "linear-gradient(to bottom, black 80%, transparent 100%)",
             WebkitMaskImage:
               "linear-gradient(to bottom, black 88%, transparent 100%)",
           }}
