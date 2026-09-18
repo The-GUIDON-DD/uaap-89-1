@@ -51,19 +51,19 @@ export function EditorsMessage() {
           src="/editors.webp"
           className="absolute left-1/2 top-[6%] h-[60%] max-w-none -translate-x-1/2"
           style={{
-            maskImage: "linear-gradient(to bottom, black 55%, transparent 90%)",
+            maskImage: "linear-gradient(to bottom, black 58%, transparent 80%)",
             WebkitMaskImage:
-              "linear-gradient(to bottom, black 55%, transparent 90%)",
+              "linear-gradient(to bottom, black 58%, transparent 80%)",
           }}
         />
         {/* Dark gradient over the lower part so the text reads over the art,
             running all the way to the bottom edge with the streaks. */}
         <div
           aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-[75%]"
+          className="absolute inset-x-0 bottom-0 h-[80%]"
           style={{
             background:
-              "linear-gradient(to top, #000 0%, #000 38%, rgba(0,0,0,0.9) 48%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.4) 75%, rgba(0,0,0,0.12) 90%, rgba(0,0,0,0) 100%)",
+              "linear-gradient(to top, #000 0%, #000 50%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0.55) 72%, rgba(0,0,0,0.25) 85%, rgba(0,0,0,0.08) 94%, rgba(0,0,0,0) 100%)",
           }}
         />
         <div className="relative z-10 flex flex-col gap-4">
