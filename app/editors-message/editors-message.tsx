@@ -32,8 +32,12 @@ export function EditorsMessage() {
   const scale = useViewportScale();
   const buttonColor = PRIMER_DEFAULTS.buttonColor;
   const buttonHover = PRIMER_DEFAULTS.buttonHoverColor;
+
   return (
-    <section className="relative z-20 size-full overflow-hidden">
+    <section
+      className="relative z-20 size-full overflow-hidden"
+      id="editors-message"
+    >
       <div
         className="absolute left-1/2 top-1/2"
         style={{
@@ -61,6 +65,12 @@ export function EditorsMessage() {
                 "linear-gradient(to bottom, transparent 0%, black 6%)",
             }}
             src={background}
+          />
+          <img
+            id="editor-image"
+            alt="Editor's Message"
+            src="/editors.webp"
+            className="absolute right-[10%] bottom-0 h-[95%]"
           />
 
           <h1 className="font-display text-white text-4xl uppercase relative z-50 mb-3">
