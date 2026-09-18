@@ -54,7 +54,7 @@ export function EditorsMessage() {
             maskImage:
               "linear-gradient(to bottom, black 80%, transparent 100%)",
             WebkitMaskImage:
-              "linear-gradient(to bottom, black 88%, transparent 100%)",
+              "linear-gradient(to bottom, black 80%, transparent 100%)",
           }}
         />
         {/* Dark gradient over the lower part so the text reads over the art,
