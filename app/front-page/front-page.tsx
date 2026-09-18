@@ -68,10 +68,6 @@ const MOBILE_MAX_W = 768;
 const MOBILE_FOCUS_X = 740;
 // The cheer photo sits further left in the canvas than the paired shots.
 const MOBILE_FOCUS_X_CHEER = 520;
-// Per-slide overrides for photos whose subject sits off-center in the frame.
-const MOBILE_FOCUS_X_BY_SLIDE: Record<string, number> = {
-  "Track & Field": 840,
-};
 const TRANSITION = { duration: 0.65, ease: [0.4, 0, 0.2, 1] as const };
 
 // Fades each photo out over this many design-space pixels right at the
@@ -144,9 +140,7 @@ export function FrontPage() {
   // Shift the canvas right so MOBILE_FOCUS_X lands mid-screen, clamped so the
   // canvas's left edge never comes into view.
   const slide = SLIDES[slideIndex];
-  const focusX =
-    MOBILE_FOCUS_X_BY_SLIDE[slide.key] ??
-    (slide.cheer ? MOBILE_FOCUS_X_CHEER : MOBILE_FOCUS_X);
+  const focusX = slide.cheer ? MOBILE_FOCUS_X_CHEER : MOBILE_FOCUS_X;
   const shiftX =
     viewportW < MOBILE_MAX_W
       ? Math.min(
@@ -298,7 +292,7 @@ export function FrontPage() {
       {/* Phones: the 16:9 canvas is cropped to its middle, which cuts off the
           right-hand logo and title, so show them as a regular overlay. */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 md:hidden">
-        <div className="flex flex-col items-end gap-4 bg-gradient-to-t from-white from-[85%] via-white/80 via-[93%] to-transparent px-5 pb-8 pt-12">
+        <div className="flex flex-col items-end gap-4 bg-gradient-to-t from-white from-[85%] via-white/80 via-[93%] to-transparent px-5 pb-4 pt-12">
           <img alt="The GUIDON" className="w-[42vw] max-w-[200px]" src={logo} />
           <img
             alt="UAAP Season 89 First Semester Primer"
