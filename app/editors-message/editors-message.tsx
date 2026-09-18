@@ -49,7 +49,7 @@ export function EditorsMessage() {
         <img
           alt="Editor's Message"
           src="/editors.webp"
-          className="absolute left-1/2 top-[6%] h-[56%] max-w-none -translate-x-1/2"
+          className="absolute left-1/2 top-[6%] h-[90%] md:h-[56%] max-w-none -translate-x-1/2"
           style={{
             maskImage:
               "linear-gradient(to bottom, black 88%, transparent 100%)",
