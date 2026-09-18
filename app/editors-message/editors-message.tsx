@@ -86,7 +86,7 @@ export function EditorsMessage() {
             }}
           >
             <span className="font-bold text-[20px] lg:text-[24px]">
-              "Read More"
+              Read More
             </span>
             <ArrowRight className="transition-transform duration-200 group-hover:translate-x-1.5 group-focus-visible:translate-x-1.5" />
           </Link>

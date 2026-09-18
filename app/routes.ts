@@ -4,4 +4,5 @@ export default [
   index("routes/home.tsx"),
   route("one-team", "routes/one-team.tsx"),
   route("sports/:sport", "routes/sport.tsx"),
+  route("editors-message", "routes/editors-message.tsx"),
 ] satisfies RouteConfig;
