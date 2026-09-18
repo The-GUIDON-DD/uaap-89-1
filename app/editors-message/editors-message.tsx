@@ -62,10 +62,6 @@ export function EditorsMessage() {
         <div
           aria-hidden="true"
           className="absolute inset-x-0 bottom-0 h-[53%]"
-          style={{
-            background:
-              "linear-gradient(to top, #000 0%, #000 78%, rgba(0,0,0,0.8) 86%, rgba(0,0,0,0.45) 93%, rgba(0,0,0,0) 100%)",
-          }}
         />
         <div className="relative z-10 flex flex-col gap-4">
           <p className="font-display text-lg uppercase text-white">
