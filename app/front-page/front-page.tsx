@@ -81,12 +81,14 @@ function SlidingPhoto({
   alt,
   box,
   anchor = "bottom",
+  className = "",
 }: {
   src: string | null;
   slideKey: string;
   alt: string;
   box: { left: number; top: number; width: number; height: number };
   anchor?: "bottom" | "center";
+  className?: string;
 }) {
   // Expressed in the box's own local coordinates, since that's what the
   // mask-image on this element is measured against.
@@ -96,7 +98,7 @@ function SlidingPhoto({
 
   return (
     <div
-      className="absolute overflow-hidden"
+      className={`absolute overflow-hidden ${className}`}
       style={{ ...box, maskImage: fadeMask, WebkitMaskImage: fadeMask }}
     >
       <AnimatePresence initial={false}>
@@ -199,6 +201,8 @@ export function FrontPage() {
                 slideKey={slide.key}
                 alt={`Ateneo Blue Eagles ${slide.key} athletes`}
                 box={{ left: -87, top: 80, width: 800, height: 1080 }}
+                // Phones only have room for one athlete, so drop the one behind.
+                className="hidden md:block"
               />
 
               <img
@@ -287,12 +291,20 @@ export function FrontPage() {
 
       {/* Phones: the 16:9 canvas is cropped to its middle, which cuts off the
           right-hand logo and title, so show them as a regular overlay. */}
-      <div className="pointer-events-none absolute inset-0 flex flex-col items-end justify-between px-5 pt-6 md:hidden">
-        <img alt="The GUIDON" className="w-[42vw] max-w-[200px]" src={logo} />
-        <div className="-mx-5 w-[calc(100%+2.5rem)] bg-gradient-to-t from-white via-white/90 to-transparent px-5 pb-10 pt-16">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 md:hidden">
+        <div
+          className="flex flex-col items-end gap-4 px-5 pb-8 pt-32"
+          style={{
+            // Solid white behind the logo and title (so the art's diagonal
+            // edges don't show through), then an eased fade into the photo.
+            background:
+              "linear-gradient(to top, #fff 0%, #fff 67%, rgba(255,255,255,0.9) 73%, rgba(255,255,255,0.7) 80%, rgba(255,255,255,0.4) 88%, rgba(255,255,255,0.12) 95%, rgba(255,255,255,0) 100%)",
+          }}
+        >
+          <img alt="The GUIDON" className="w-[42vw] max-w-[200px]" src={logo} />
           <img
             alt="UAAP Season 89 First Semester Primer"
-            className="ml-auto w-[78vw] max-w-[360px]"
+            className="w-[78vw] max-w-[360px]"
             src={title}
           />
         </div>

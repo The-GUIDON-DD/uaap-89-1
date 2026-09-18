@@ -43,20 +43,27 @@ export function EditorsMessage() {
         <img
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 size-full object-cover opacity-70"
+          className="absolute inset-0 size-full object-cover object-[6%_-5%] opacity-70"
           src={background}
         />
         <img
           alt="Editor's Message"
           src="/editors.webp"
-          className="absolute left-1/2 top-[6%] h-[60%] max-w-none -translate-x-1/2"
+          className="absolute left-1/2 top-[6%] h-[90%] md:h-[56%] max-w-none -translate-x-1/2"
           style={{
-            maskImage: "linear-gradient(to bottom, black 70%, transparent)",
+            maskImage:
+              "linear-gradient(to bottom, black 80%, transparent 100%)",
             WebkitMaskImage:
-              "linear-gradient(to bottom, black 70%, transparent)",
+              "linear-gradient(to bottom, black 80%, transparent 100%)",
           }}
         />
-        <div className="relative z-10 flex flex-col gap-4 bg-gradient-to-t from-black via-black/80 to-transparent pt-16">
+        {/* Dark gradient over the lower part so the text reads over the art,
+            running all the way to the bottom edge with the streaks. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-[53%]"
+        />
+        <div className="relative z-10 flex flex-col gap-4">
           <p className="font-display text-lg uppercase text-white">
             A message from the editors
           </p>
