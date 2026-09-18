@@ -50,7 +50,9 @@ function ArticleContent({ article }: { article: string }) {
         {paragraphs[0].split(" ").slice(2).join(" ")}
       </p>
       {paragraphs.slice(1).map((para) => (
-        <p key={para}>{para}</p>
+        <p className="text-black" key={para}>
+          {para}
+        </p>
       ))}
     </article>
   );
