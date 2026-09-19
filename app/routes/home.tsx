@@ -24,10 +24,10 @@ export default function Home() {
   return (
     <main>
       <Sidebar />
-      <div className="h-dvh w-full snap-start">
+      <div className="h-screen w-screen snap-start">
         <FrontPage />
       </div>
-      <div className="h-dvh w-full snap-start">
+      <div className="h-screen w-screen snap-start">
         <EditorsMessage />
       </div>
       <section>

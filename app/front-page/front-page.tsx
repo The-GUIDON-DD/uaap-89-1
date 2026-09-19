@@ -230,7 +230,7 @@ export function FrontPage() {
                 }}
                 src={logo}
               />
-              <section className="absolute right-[5%] bottom-[10vh] w-[30vw] flex flex-col items-end">
+              <section className="absolute right-[5%] bottom-[15%] w-[30vw] flex flex-col items-end">
                 <img
                   alt="UAAP Season 89 First Semester Primer"
                   className="w-full mb-6"

@@ -1,3 +1,5 @@
+import { createTimeline, onScroll } from "animejs";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { PRIMER_DEFAULTS } from "../article/types";
 import {
@@ -27,15 +29,89 @@ function ArrowRight({ className }: { className?: string }) {
     </svg>
   );
 }
+/** Runs `enter` once, when `el` first scrolls into view. */
+function onInView(
+  el: Element,
+  enter: () => void,
+  threshold = 0.2,
+  rootMargin = "0px",
+) {
+  const io = new IntersectionObserver(
+    (entries, obs) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        obs.unobserve(entry.target);
+        enter();
+      }
+    },
+    { threshold, rootMargin },
+  );
+  io.observe(el);
+  return () => io.disconnect();
+}
 
 export function EditorsMessage() {
   const scale = useViewportScale();
   const buttonColor = PRIMER_DEFAULTS.buttonColor;
   const buttonHover = PRIMER_DEFAULTS.buttonHoverColor;
+  const editorsMessageRef = useRef(null);
+
+  useEffect(() => {
+    const el = editorsMessageRef.current;
+    if (!el) return;
+
+    return onInView(
+      el,
+      () => {
+        const tl = createTimeline({ autoplay: true });
+        tl.add(
+          "#editor-image",
+          {
+            translateY: ["100%", 0],
+            duration: 1800,
+            ease: "out(3)",
+          },
+          250,
+        );
+        tl.add(
+          "#h1-message-editors",
+          {
+            translateY: ["-100%", 0],
+            duration: 750,
+            ease: "out(3)",
+          },
+          250,
+        );
+        tl.add(
+          "#h1-fight-and",
+          {
+            translateY: ["100%", 0],
+            duration: 750,
+            delay: 130,
+            ease: "out(3)",
+          },
+          400,
+        );
+        tl.add(
+          "#h1-rise-together",
+          {
+            translateY: ["100%", 0],
+            duration: 750,
+            delay: 130,
+            ease: "out(3)",
+          },
+          550,
+        );
+        tl.init();
+      },
+      0.5,
+    );
+  }, []);
 
   return (
     <section
-      className="relative z-20 size-full overflow-hidden"
+      className="relative size-full overflow-hidden"
+      ref={editorsMessageRef}
       id="editors-message"
     >
       <div
@@ -73,13 +149,30 @@ export function EditorsMessage() {
             className="absolute right-[10%] bottom-0 h-[95%]"
           />
 
-          <h1 className="font-display text-white text-4xl uppercase relative z-50 mb-3">
-            A message from the editors
-          </h1>
-          <h1 className="font-display text-white text-9xl uppercase relative z-50 mb-15">
-            Fight and <br />
-            rise together
-          </h1>
+          <div className="overflow-clip">
+            <h1
+              id="h1-message-editors"
+              className="font-display text-white text-4xl uppercase relative z-50 mb-3"
+            >
+              A message from the editors
+            </h1>
+          </div>
+          <div className="overflow-clip">
+            <h1
+              id="h1-fight-and"
+              className="font-display text-white text-9xl uppercase relative z-50 mb-0"
+            >
+              Fight and
+            </h1>
+          </div>
+          <div className="overflow-clip mb-15">
+            <h1
+              id="h1-rise-together"
+              className="font-display text-white text-9xl uppercase relative z-50"
+            >
+              rise together
+            </h1>
+          </div>
           <p className="font-archivo text-white text-2xl relative z-50 w-[40%] mb-25">
             <strong>NOW MORE</strong> than ever, sports has become an arena not
             just for play, but for real human stories. After the passing of

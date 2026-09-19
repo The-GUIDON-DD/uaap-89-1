@@ -160,19 +160,21 @@ export function Sidebar() {
         }`}
       >
         {/* Logo block */}
-        <div className="flex flex-col items-center gap-[12px] mt-[60px] mb-[32px]">
-          <img
-            src={guidonLogo}
-            alt="The Guidon"
-            className="block h-[24px] w-[157px]"
-          />
-          <img
-            src={uaapTitle}
-            alt="UAAP Season 89"
-            className="block h-[95px] w-[184px]"
-          />
-          <p className="text-[20px] leading-[0.9]">First Semester Primer</p>
-        </div>
+        <Link to="/">
+          <div className="flex flex-col items-center gap-[12px] mt-[60px] mb-[32px]">
+            <img
+              src={guidonLogo}
+              alt="The Guidon"
+              className="block h-[24px] w-[157px]"
+            />
+            <img
+              src={uaapTitle}
+              alt="UAAP Season 89"
+              className="block h-[95px] w-[184px]"
+            />
+            <p className="text-[20px] leading-[0.9]">First Semester Primer</p>
+          </div>
+        </Link>
 
         {/* Options list */}
         <nav className="mt-[24px] flex flex-col">
