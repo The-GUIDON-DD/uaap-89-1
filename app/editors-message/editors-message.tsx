@@ -1,4 +1,4 @@
-import { createTimeline, onScroll } from "animejs";
+import { createTimeline } from "animejs";
 import { useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { PRIMER_DEFAULTS } from "../article/types";
