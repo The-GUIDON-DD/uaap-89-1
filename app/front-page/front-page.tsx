@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { FaChevronDown } from "react-icons/fa";
 import {
   DESIGN_H,
   DESIGN_W,
@@ -229,16 +230,22 @@ export function FrontPage() {
                 }}
                 src={logo}
               />
-              <img
-                alt="UAAP Season 89 First Semester Primer"
-                className="absolute"
-                style={{
-                  right: "5%",
-                  bottom: "15vh",
-                  width: "30vw",
-                }}
-                src={title}
-              />
+              <section className="absolute right-[5%] bottom-[10vh] w-[30vw] flex flex-col items-end">
+                <img
+                  alt="UAAP Season 89 First Semester Primer"
+                  className="w-full mb-6"
+                  src={title}
+                />
+                <motion.a
+                  animate={{
+                    y: [0, 5, 0],
+                    transition: { duration: 3, repeat: Infinity },
+                  }}
+                  href="#editors-message"
+                >
+                  <FaChevronDown size={80} color="#194681" />
+                </motion.a>
+              </section>
               <img
                 alt=""
                 aria-hidden="true"
