@@ -91,7 +91,7 @@ export function Credits({
 }: CreditsProps = {}) {
   return (
     <footer className="flex min-h-screen w-full flex-col bg-[#194681] font-archivo text-white">
-      <div className="mx-auto flex w-full max-w-[1777px] flex-1 flex-col px-6 py-[22px] sm:px-12 lg:px-[92px]">
+      <div className="mx-auto flex w-full max-w-[1777px] flex-1 flex-col px-6 pb-[22px] pt-20 sm:pt-[22px] sm:px-12 lg:px-[92px]">
         {/* Masthead */}
         <div className="flex flex-col gap-[14px] lg:gap-[16px]">
           <img

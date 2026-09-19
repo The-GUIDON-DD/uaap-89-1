@@ -28,21 +28,21 @@ function ArrowRight({ className }: { className?: string }) {
 
 export default function EditorsMessage() {
   return (
-    <main className="w-full min-h-screen grid grid-cols-1 grid-rows-1">
+    <main className="w-full min-h-screen grid grid-cols-1 grid-rows-1 bg-white">
       <Sidebar />
       <section className="size-full col-start-1 row-start-1 bg-white">
         <section className="bg-[url('/article-bg.svg')] bg-cover bg-black w-full h-85" />
         <Link
           to="/"
-          className="mt-4 rounded-lg px-5 py-2 font-bold transition-colors bg-[#1c4480] text-white font-archivo absolute right-[5vw] top-5 group"
+          className="mt-4 rounded-lg px-5 py-2 font-bold transition-colors bg-[#1c4480] text-white font-archivo absolute right-4 sm:right-[5vw] top-3 sm:top-5 z-10 group"
         >
           <ArrowRight className="transition-transform duration-200 group-hover:-translate-x-1.5 group-focus-visible:-translate-x-1.5 -scale-x-100 inline-block mr-2" />
           Back
         </Link>
       </section>
-      <section className="size-full col-start-1 row-start-1 relative top-40 px-[30%]">
-        <section className="h-52 flex flex-col gap-2 mb-4">
-          <h1 className="font-display text-white text-6xl uppercase whitespace-pre">
+      <section className="size-full col-start-1 row-start-1 relative pt-24 pb-16 px-5 sm:pt-40 sm:px-[10%] lg:px-[20%] xl:px-[30%]">
+        <section className="min-h-52 flex flex-col gap-2 mb-12 sm:mb-4">
+          <h1 className="font-display text-white text-4xl sm:text-6xl uppercase whitespace-pre-line">
             Fight and
             <br />
             Rise Together
@@ -52,7 +52,7 @@ export default function EditorsMessage() {
             <strong>Ravi G. Tan</strong>
           </p>
         </section>
-        <article className="w-full flex flex-col gap-8 my-0">
+        <article className="w-full flex flex-col gap-8 my-0 text-black">
           <p>
             <span className="font-bold uppercase text-[#1c4480]">NOW MORE</span>{" "}
             than ever, sports has become an arena not just for play, but for

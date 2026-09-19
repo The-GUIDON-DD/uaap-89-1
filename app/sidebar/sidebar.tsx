@@ -8,9 +8,12 @@ type SportOption = {
   name: string;
   /** Present (even if empty) for a collapsible option; omit for a leaf option. */
   subOptions?: string[];
+  /** Custom destination for a leaf option; defaults to `/sports/<slug>`. */
+  href?: string;
 };
 
 const options: SportOption[] = [
+  { name: "Editor’s Message", href: "/editors-message" },
   {
     name: "Basketball",
     subOptions: ["Men’s Basketball", "Women’s Basketball"],
@@ -214,7 +217,7 @@ export function Sidebar() {
                   </button>
                 ) : (
                   <Link
-                    to={`/sports/${slugify(option.name)}`}
+                    to={option.href ?? `/sports/${slugify(option.name)}`}
                     className={headerClass}
                   >
                     <span className="whitespace-nowrap text-[19px] font-bold">
